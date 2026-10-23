@@ -1,15 +1,18 @@
 # Reading a vendor MIB to choose symbols
 
-The operator supplies the MIB text. Every symbol in a spec must be **defined in a module the
-operator will upload**, and the spec names that module. Don't write a symbol from memory you
+The operator supplies the MIB text. Every symbol in a profile must be **defined in a module
+the operator will upload**, and the profile file names that module. Don't write a symbol from memory you
 can't point at in the file: a wrong name saves cleanly and shows as unresolved forever. If
 the operator has no MIB, say which module to get and from where (the vendor's support site),
 and stop short of guessing symbols.
 
+The snippets below use a fictional module, `EXAMPLE-UPS-MIB`, to show the SMI shapes. They are
+not any vendor's real objects.
+
 ## 1. Find the module and its dependencies
 
 ```
-PowerNet-MIB DEFINITIONS ::= BEGIN
+EXAMPLE-UPS-MIB DEFINITIONS ::= BEGIN
 IMPORTS
    enterprises, Gauge, TimeTicks   FROM RFC1155-SMI
    DisplayString                   FROM RFC1213-MIB
@@ -17,8 +20,8 @@ IMPORTS
    TRAP-TYPE                       FROM RFC-1215;
 ```
 
-- The module name (`PowerNet-MIB`) is what the spec's `mibs[].moduleName` and every row's
-  `mib` field carry.
+- The module name (`EXAMPLE-UPS-MIB`) is what the profile file's `mibs[].moduleName` and every
+  row's `mib.moduleName` carry.
 - List every `FROM <MODULE>`. Resolution is by **symbol name**, so only imports that supply
   an OID *anchor* matter. These need **no upload**:
   - SMI / TC / macro modules (SNMPv2-SMI, SNMPv2-TC, SNMPv2-CONF, RFC1155-SMI, RFC-1212,
@@ -37,15 +40,15 @@ IMPORTS
 ## 2. Scalar or column?
 
 ```
-upsAdvBatteryCapacity OBJECT-TYPE
+exUpsBatteryCapacity OBJECT-TYPE
     SYNTAX  Gauge
     ACCESS  read-only
     STATUS  mandatory
     DESCRIPTION "The remaining battery capacity expressed in percent of full capacity."
-    ::= { upsAdvBattery 1 }
+    ::= { exUpsBattery 1 }
 ```
 
-- Parent is a plain group (`upsAdvBattery`) → **scalar**, instance `.0`. Use `type: scalar`,
+- Parent is a plain group (`exUpsBattery`) → **scalar**, instance `.0`. Use `type: scalar`,
   aggregate `none`.
 - Parent is an `…Entry` whose own SYNTAX is a `SEQUENCE` and which carries an `INDEX` clause →
   **column**. One value per row. On a CPU or memory row use `aggregate: avg` / `sum` (or CPU
@@ -73,7 +76,7 @@ DESCRIPTION together:
 ## 4. Status objects: enum polarity
 
 ```
-upsBasicBatteryStatus OBJECT-TYPE
+exUpsBatteryStatus OBJECT-TYPE
     SYNTAX INTEGER { unknown(1), batteryNormal(2), batteryLow(3), batteryInFaultCondition(4) }
 ```
 
@@ -93,7 +96,7 @@ what you want for a battery. Say which way you chose.
 
 ## 5. Choose per metric
 
-For each of the five read rows, write one line in the spec's `notes`, of these kinds:
+For each of the five read rows, say in your answer which of these it is:
 
 - *"CPU: standard (hrProcessorLoad), no row."* The device implements HOST-RESOURCES-MIB.
   Confirm with an SNMP walk of `std:host-resources` from the asset's SNMP Walk tool if
@@ -111,5 +114,6 @@ Polling is every telemetry pass, and a 5-second sample is mostly noise at that c
 
 In Polaris: open an asset of that vendor → **SNMP Walk** (the asset's tools), pick the
 uploaded MIB, walk the chosen symbol. Check that it answers, the value's magnitude matches
-your unit reading, and a column has the rows you expect. A spec whose symbols were never
-walked against real hardware goes in the library as **untested** (see delivery.md).
+your unit reading, and a column has the rows you expect. A profile whose symbols were never
+walked against real hardware goes in the toolbox's `profiles/` as **untested** (see
+delivery.md).

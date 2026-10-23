@@ -1,5 +1,5 @@
 ---
-name: polaris-api-conventions
+name: polaris-api
 description: "Client guide for the Polaris IP-management and monitoring REST API (/api/v1): bearer tokens bound to roles, error envelope and status conventions, filter-don't-403 dashboard/NOC feeds, search scopes, IPAM blocks/networks/reservations, the SIEM quarantine flow, Path Monitor path checks (agent-run HTTP / HTTPS / TCP / ICMP reachability checks, their per-host results, latency history and traceroutes), automations (rule CRUD, the /schema vocabulary, preview / dry run), the MIB Database (upload, structure, walk) and manufacturer profiles (metric rows, overrides, custom widgets and state probes, export / import), and the events audit tail, with curl examples. Load when a project calls a Polaris server, needs a POLARIS_TOKEN, quarantines a device from a SIEM/EDR, builds a NOC wallboard or inventory sync, creates or reads path checks (is a service reachable from each site), creates or edits automations over the API, uploads MIBs or builds a manufacturer profile programmatically, or asks what a Polaris endpoint returns."
 ---
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// import-api-html.mjs — regenerate skills/polaris-api-conventions/references/*.md from a Polaris
+// import-api-html.mjs — regenerate skills/polaris-api/references/*.md from a Polaris
 // checkout's public/api.html (the deliberately curated external API contract). One Markdown file
 // per <section>, each endpoint block → "### METHOD /path" with its gate, prose and curl example.
 // Records the source file's sha256 in .claude-plugin/plugin.json so drift is visible.
@@ -12,7 +12,7 @@ import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const PLUGIN = resolve(here, "..");
-const OUT = join(PLUGIN, "skills", "polaris-api-conventions", "references");
+const OUT = join(PLUGIN, "skills", "polaris-api", "references");
 const src = process.argv[2];
 if (!src) { console.error("usage: node scripts/import-api-html.mjs <polaris>/public/api.html"); process.exit(2); }
 const html = readFileSync(src, "utf8").replace(/\r\n/g, "\n");

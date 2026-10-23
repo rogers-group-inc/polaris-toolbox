@@ -6,12 +6,18 @@ shape) and the SNMP collectors in `src/services/monitoringService.ts` (`collectC
 `collectManufacturerWidgetSamples`). The validation in profile-model.md decides what *saves*.
 This file decides what *collects*.
 
-## Which profile an asset gets
+## Which profile an asset gets (Polaris rule 131)
 
 1. The profile whose `manufacturer` equals the asset's alias-normalized manufacturer.
 2. Only if none: the first profile, alphabetically by manufacturer, whose `matchPattern`
    matches `"<manufacturer> <os> <pinned MIB module>"`.
 3. Otherwise none, and every stream uses the standard MIBs.
+
+The same answer is used everywhere: the metric rows, the custom widgets, the Custom MIB tab
+and the widget's per-device switch. A profile's symbols resolve first at the asset's own
+scope (MIBs uploaded under the asset's manufacturer and model, so a device-specific upload
+wins), then at the profile's manufacturer — which is also where the profile page checks
+readiness, so READY on the page means the device can resolve it.
 
 Profiles are cached per process and refreshed within 60 s on the monitor process, so allow a
 minute after a save before judging a row.
@@ -48,16 +54,28 @@ If the vendor symbol doesn't resolve or returns nothing, `hrProcessorLoad` is tr
 
 The percent is computed from the pair, so units only need to *agree* (KB/KB is fine). But
 the stored byte counts are charted as bytes: a KB pair shows 1/1024 of the real size. There
-is no transform on memory rows. Note it in the spec's `notes` when the vendor's unit isn't
+is no transform on memory rows. Say so in your answer when the vendor's unit isn't
 bytes.
 
 ### Hardware Sensors (`temperature`), only after the standard sources come back empty
 
 Order the collector tries:
 
-1. **Fortinet's `fgHwSensorTable`**, if the manufacturer matches /fortinet/ **or** the row is
-   `type: table`. That walk uses hardcoded Fortinet columns, and **the row's symbol is
-   ignored**, so a `table` row on any other vendor walks nothing useful and wastes a walk.
+1. **The profile's sensor table**, when the row is `type: table` (Polaris rule 132). The row's
+   symbol is the table's **value column**; `sensorColumns` names the rest:
+   - `nameSymbol` — the sibling column naming each row (without it, rows are `sensor-<index>`;
+     with it, a row whose name is blank is skipped);
+   - `alarmSymbol` + `alarmMap` — an alarm column and how its reading becomes alarm / ok, in
+     the state-probe modes (`nonzero` when no map is given — 0 = ok, anything else = alarm);
+   - `sensorClass` — one class for every row (`temperature`, `fan`, `voltage`, `current`,
+     `optical`, `poe`, `power`, `disk`, `other`), for a table whose row names don't say;
+     null = classify each row by its name;
+   - `transform` — only `tenths_to_units`.
+   Each column resolves like any symbol; the three walks are joined on the shared index. A
+   blank or non-numeric value is null, never 0. An empty walk (MIB not uploaded, device
+   without that table) falls through to the next step. No vendor table is built in:
+   FortiGate's is `fgHwSensorEntValue` + `fgHwSensorEntName` + `fgHwSensorEntAlarmStatus`
+   (`nonzero`), stated as a row like any other.
 2. **ENTITY-SENSOR-MIB** (`entPhySensorTable`), on every device. Temperatures, fans,
    voltages and optics, with the agent's own oper status as the alarm bit. If the device
    implements it, leave this row empty.
@@ -65,9 +83,9 @@ Order the collector tries:
    transform allowed), round to 0.1, and store one sensor named `label` (default `System`)
    in °C.
 
-So outside Fortinet, Hardware Sensors carries **one** scalar temperature. Multi-sensor vendor
-tables (UPS probes, PDU banks, chassis fan tables) belong in **widgets** (table) or **state
-probes** (alarm columns).
+Columns on a non-table temperature row are cleared when saved; on any other metric they are
+refused. Per-row STATUS tables that are not readings (PSU present, fan tray OK) are still
+better as **state probes**, which alert per row by name.
 
 ### Storage (`storage`), only when `hrStorageTable` has no disk rows
 
@@ -123,16 +141,16 @@ default catches the asset with an empty model; the model row catches the mis-typ
 
 ## Rows that save and do nothing
 
-Name these in the spec's `notes` if a requester asks for them:
+Say so if a requester asks for one of these:
 
 - anything on `interfaces`, `lldp`, `wirelessStations`
 - a metric-row transform other than `tenths_to_units` on scalar temperature (refused anyway)
-- `table` Hardware Sensors on a non-Fortinet vendor
+- a Hardware Sensors `table` row whose symbol is a table root or entry, not the value column
 - `scalar` / `table` Storage
 - a `double_scalar` memory with a combiner other than the two listed
-- a symbol from a MIB uploaded under a *different* manufacturer spelling
+- a symbol from a MIB uploaded under neither the device's manufacturer nor the profile's
 - a `scalar` row naming a table column (GET `.0` finds nothing)
-- widgets on a profile reached only through `matchPattern`
+- a custom widget that is not switched on for the device
 
 ## Scale
 

@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+# Vendor MIB files are the vendor's copyright: never commit one.
+*.mib
+*.my
+mibs/

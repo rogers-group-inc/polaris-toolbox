@@ -356,7 +356,7 @@ When a script needs more of the record than an args template can carry. `POLARIS
 Two constraints: the bearer token is a secret, so it lives in a file; and it should be bound to
 a **least-privilege role** (assets read), never an admin one. Do not read Polaris's Postgres
 or state directory directly — go through the API. For write payloads, consult the in-app API
-page (`/api.html`) or the `polaris-api-conventions` plugin rather than guessing a shape.
+page (`/api.html`) or the `polaris-api` skill in this toolbox rather than guessing a shape.
 
 **Prerequisite** — mode 0600, owned by the polaris service account:
 

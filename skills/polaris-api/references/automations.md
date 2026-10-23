@@ -31,15 +31,16 @@ Create a rule; `201` with `{ rule }`. Body (validated against the same schema th
 
 - `name` (required, ≤200), `description?`, `enabled?` (default `true`), `severity?` — `notice | informational | warning | serious | critical` (default `warning`).
 - `trigger` (required), one of: `{ type: "asset_metric", metric, operator, threshold, aggregation?, windowPolls?, forPolls?, dimensionFilter? }` (a reading such as `cpuPct`, `hwSensorValue`, `customStateValue`, `pathOk`); `{ type: "asset_state", field, operator, value, forPolls? }` (a state such as `monitorStatus`); `{ type: "host_metric", … }` (the Polaris server itself); `{ type: "event", actionPattern, resourceType?, minLevel?, detailsMatch? }` (an audit Event, glob on its action); `{ type: "change", changeType, dimensionFilter? }`; or `{ type: "composite", kind: "asset" | "host", op: "and" | "or", children, forPolls? }` (a tree of metric / state conditions). Operators are `> >= < <= == !=`. A hold (`forPolls`) and a window (`windowPolls`) count *readings*, not seconds.
-- `scope?` — the device filter (`{}` = every device). Only monitored devices ever alert; `POST /automations/preview` with just a scope lists what it selects.
-- `actions?` — up to 20, each one of `notify` (a delivery channel id from `/delivery-channels` plus recipients), `api_call`, `script`, `event`, `reboot`; each may carry its own escalation tiers. `channels?` defaults to `["in_app"]`, so a rule with no actions still raises an in-app alert.
-- `reset?`, `resetActions?`, `repeat?`, `escalation?`, `severityBands?` (numeric metrics only), `bandNotify?`, `cooldownSec?`, `messageTemplate?`, `emailComposition?`, `groupByAsset?` (one alert per device for per-component triggers), `requireAckNote?`, `quietTime?` (`null` = the global schedules apply, `{ ignoreGlobal: true }` = never held, or a policy of its own).
+- `scope?` — the device filter. **`{}` selects no devices** for a device trigger (metric, state, composite): every device is `{ "allAssets": true }`, otherwise name the filter (`assetTypes`, `tags`, `manufacturers`, …, or a `condition` tree). Only an `event` trigger reads `{}` as any device. Only monitored devices ever alert; `POST /automations/preview` with just a scope lists what it selects.
+- `actions?` — up to 20, each one of `notify` (a delivery channel id from `/delivery-channels` plus recipients), `api_call`, `script`, `event`, `reboot`; each may carry its own escalation tiers.
+- `reset?` — how an alert clears. **Absent means `manual`**: it never clears by itself; send `{ "mode": "auto" }` to clear when the condition stops holding.
+- `resetActions?`, `repeat?`, `escalation?`, `severityBands?` (numeric metrics only), `bandNotify?`, `cooldownSec?`, `messageTemplate?`, `emailComposition?`, `groupByAsset?` (one alert per device for per-component triggers), `requireAckNote?`, `quietTime?` (`null` = the global schedules apply, `{ ignoreGlobal: true }` = never held, or a policy of its own).
 
 ```bash
 curl -X POST -H "Authorization: Bearer $POLARIS_TOKEN" -H "Content-Type: application/json" \
-  -d '{"name":"Firewall CPU high","severity":"serious",
+  -d '{"name":"Firewall CPU high","severity":"serious","enabled":false,
        "trigger":{"type":"asset_metric","metric":"cpuPct","operator":">","threshold":90,"forPolls":3},
-       "scope":{}}' \
+       "scope":{"assetTypes":["firewall"]},"reset":{"mode":"auto"}}' \
   "$POLARIS_URL/api/v1/automations"
 ```
 

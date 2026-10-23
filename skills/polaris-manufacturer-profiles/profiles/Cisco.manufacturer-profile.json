@@ -1,0 +1,46 @@
+{
+  "format": "polaris.manufacturer-profile",
+  "version": 1,
+  "manufacturer": "Cisco",
+  "matchPattern": "cisco|ios-?xe|nx-?os",
+  "mibs": [],
+  "metrics": [
+    {
+      "metricKey": "cpu",
+      "symbol": "cpmCPUTotal5secRev",
+      "symbolB": null,
+      "mib": null,
+      "mibStdKey": null,
+      "type": "table",
+      "transform": null,
+      "aggregate": "avg",
+      "label": null,
+      "parsePattern": null,
+      "parseTemplate": null,
+      "sensorColumns": null,
+      "overrides": []
+    },
+    {
+      "metricKey": "memory",
+      "symbol": "ciscoMemoryPoolUsed",
+      "symbolB": "ciscoMemoryPoolFree",
+      "mib": null,
+      "mibStdKey": null,
+      "type": "double_scalar",
+      "transform": "a_over_a_plus_b_as_percent",
+      "aggregate": "sum",
+      "label": null,
+      "parsePattern": null,
+      "parseTemplate": null,
+      "sensorColumns": null,
+      "overrides": []
+    }
+  ],
+  "widgets": [],
+  "layout": null,
+  "_toolbox": {
+    "status": "shipped-seed",
+    "testedOn": null,
+    "note": "Exported from a fresh Polaris install: the Cisco profile Polaris seeds, resolving through the Cisco MIBs it also ships (CISCO-SMI, CISCO-PROCESS-MIB, CISCO-MEMORY-POOL-MIB)."
+  }
+}

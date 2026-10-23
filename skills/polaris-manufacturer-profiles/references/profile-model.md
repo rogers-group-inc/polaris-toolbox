@@ -39,6 +39,7 @@ Fields (on the metric row they carry a `default` prefix; on an override row they
 | `defaultLabel` / `label` | text | Storage: the `mountPath` of the synthesized storage row (e.g. `flash`). Hardware Sensors scalar: the sensor name (default `System`). |
 | `defaultParsePattern` / `parsePattern` | RE2 regex with ≥ 1 capture group | `model` row only (400 on any other). Required when a `model` symbol is set. ≤ 512. |
 | `defaultParseTemplate` / `parseTemplate` | text containing `$1` | `model` row only. Optional; ≤ 200. |
+| `defaultSensorColumns` / `sensorColumns` | `{ nameSymbol, alarmSymbol, alarmMap, sensorClass, transform }` | `temperature` rows of type `table` only (Polaris rule 132): the sensor table's sibling columns beside the value column the row's symbol names. `alarmMap` is a state mapping (`{ "mode": "nonzero" }` when omitted); `sensorClass` one of `temperature`, `fan`, `voltage`, `current`, `optical`, `poe`, `power`, `disk`, `other` or null; `transform` only `tenths_to_units`. Cleared on a non-table temperature row, 400 on any other metric. In an export file the field is `sensorColumns` on both metric and override rows. |
 | `defaultMibId` / `mibId` | uploaded `MibFile` id | Display / explanation only. The resolver does not need it, but readiness uses it to say *why* a symbol is unresolved. |
 | `defaultMibStdKey` / `mibStdKey` | `std:system`, `std:interfaces`, `std:if-ext`, `std:host-resources`, `std:entity`, `std:entity-sensor`, `std:lldp`, `std:poe`, `std:bridge`, `std:q-bridge`, `std:rstp`, `std:ip` | Display-only hint for a symbol from a bundled standard MIB. **Mutually exclusive with the MIB id** (400 if both are set). |
 
@@ -82,18 +83,20 @@ Scope is the pair `(assetType, modelPattern)`, and **at least one half must be s
 | Field | Rule |
 |---|---|
 | `name` | required |
-| `widgetType` | `gauge` \| `line` \| `table` \| `state` \| `http` |
+| `widgetType` | `gauge` \| `line` \| `value` \| `table` \| `state` \| `http` |
 | `symbol` | required for every type but `http` (null there) |
 | `mibId` | **required** for every type but `http`, and it must be an *uploaded* `MibFile`. A widget on a standard-MIB symbol needs that module uploaded too, usually as a generic MIB. |
 | `type` | `scalar` \| `table` (no `double_scalar` on widgets) |
 | `transform` | any unary transform, or null |
-| `displayOptions` | gauge: `min`, `max`, `unit`, `warningAt`, `warningWhen` (`"below"`, or absent = above). line: `unit`, `warningAt`, `warningWhen`. table: none. These paint the card only; alerting is an automation's job. |
+| `displayOptions` | gauge: `min`, `max`, `unit`, `format`, `warningAt`, `warningWhen` (`"below"`, or absent = above). line and value: `unit`, `format`, `warningAt`, `warningWhen`. table: none. `format` is `""`, `duration_s` or `duration_ticks`. These paint the card only; alerting is an automation's job. |
 | `modelPattern` | optional RE2 gate against `Asset.model` |
 | `stateMap`, `labelSymbol` | `state` only; `stateMap` required there. Forced null on other types. |
 | `httpCheck`, `credentialId` | `http` only. Forced null on other types. |
 | `order` | int |
 
-Full widget semantics: [widgets-and-state-probes.md](widgets-and-state-probes.md).
+A widget polls only the devices it is switched on for (Polaris rule 130) — the switch is per
+(device, widget), is not part of a profile file, and starts OFF. Full widget semantics:
+[widgets-and-state-probes.md](widgets-and-state-probes.md).
 
 ## MibFile: an uploaded module
 
