@@ -9,7 +9,7 @@ Polaris automations can run an operator-authored script as an action. This skill
 that script — **finished, pasteable, and correct about what it will actually receive.**
 
 The registry and the runner are RCE-equivalent surfaces (`automationScripts` RBAC key,
-seeded fullwrite for admin-equivalent roles only). Server scripts run as the polaris service
+whose top level is Read-Write; only admin-equivalent roles hold it by default). Server scripts run as the polaris service
 account on the Polaris host; agent scripts run as **root / LocalSystem** on the triggering
 asset. Every script this skill emits carries the reminder that **a human must review it
 before it is enabled in production** — that is the app's own posture, printed in the modal.

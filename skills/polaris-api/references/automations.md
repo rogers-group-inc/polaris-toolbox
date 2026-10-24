@@ -6,6 +6,8 @@ An **automation** is a rule: a *trigger* evaluated over the devices its *scope* 
 
 The rule body is large and versioned by its own vocabulary, so build against `GET /automations/schema` rather than a hardcoded list: it returns every metric, state field, comparator, aggregation, change type, action type and severity the server accepts, plus the names behind the ids a condition can carry (state probes, path checks, custom widgets). Draft a rule with `POST /automations/preview` before creating it — it reports which devices the draft would cover and how many readings meet it right now, and writes nothing.
 
+An `asset_state` trigger on `monitorStatus == down` is not only an alert: its `missedPolls` is how down detection is defined for its devices, and a device no such automation covers is never declared down. `alertWhenDependencyDown: true` also alerts when a device is silenced because its parent is down. Check `GET /automations/:id/removal-impact` before deleting or disabling one.
+
 ### GET /automations
 
 _Gate: automationManagement:read_
@@ -30,7 +32,7 @@ _Gate: automationManagement:write_
 Create a rule; `201` with `{ rule }`. Body (validated against the same schema the UI uses; `400` names the field):
 
 - `name` (required, ≤200), `description?`, `enabled?` (default `true`), `severity?` — `notice | informational | warning | serious | critical` (default `warning`).
-- `trigger` (required), one of: `{ type: "asset_metric", metric, operator, threshold, aggregation?, windowPolls?, forPolls?, dimensionFilter? }` (a reading such as `cpuPct`, `hwSensorValue`, `customStateValue`, `pathOk`); `{ type: "asset_state", field, operator, value, forPolls? }` (a state such as `monitorStatus`); `{ type: "host_metric", … }` (the Polaris server itself); `{ type: "event", actionPattern, resourceType?, minLevel?, detailsMatch? }` (an audit Event, glob on its action); `{ type: "change", changeType, dimensionFilter? }`; or `{ type: "composite", kind: "asset" | "host", op: "and" | "or", children, forPolls? }` (a tree of metric / state conditions). Operators are `> >= < <= == !=`. A hold (`forPolls`) and a window (`windowPolls`) count *readings*, not seconds.
+- `trigger` (required), one of: `{ type: "asset_metric", metric, operator, threshold, aggregation?, windowSec?, windowPolls?, forPolls?, dimensionFilter? }` (a reading such as `cpuPct`, `hwSensorValue`, `customStateValue`, `pathOk`); `{ type: "asset_state", field, operator, value, forPolls?, missedPolls?, alertWhenDependencyDown? }` (a state such as `monitorStatus`; the last two only on `monitorStatus == down`); `{ type: "host_metric", … }` (the Polaris server itself); `{ type: "event", actionPattern, resourceType?, minLevel?, detailsMatch? }` (an audit Event, glob on its action); `{ type: "change", changeType, dimensionFilter? }`; or `{ type: "composite", kind: "asset" | "host", op: "and" | "or", children, forPolls? }` (a tree of metric / state conditions). Operators are `> >= < <= == !=`. A hold (`forPolls`) counts readings. A window is `windowSec` (seconds of samples) or `windowPolls` (the last N readings; wins when set).
 - `scope?` — the device filter: `{ "allAssets": true }`, or `assetTypes`, `tags`, `manufacturers`, …, or a `condition` tree. **`{}` selects no devices** except on an `event` trigger. Only monitored devices alert; `POST /automations/preview` lists what a scope selects.
 - `actions?` — up to 20, each one of `notify` (a delivery channel id from `/delivery-channels` plus recipients), `api_call`, `script`, `event`, `reboot`; each may carry its own escalation tiers.
 - `reset?` — **absent means `manual`** (never clears by itself); `{ "mode": "auto" }` clears when the condition stops.
@@ -43,8 +45,6 @@ curl -X POST -H "Authorization: Bearer $POLARIS_TOKEN" -H "Content-Type: applica
        "scope":{"assetTypes":["firewall"]},"reset":{"mode":"auto"}}' \
   "$POLARIS_URL/api/v1/automations"
 ```
-
-An `asset_state` trigger on `monitorStatus == down` is not only an alert: its `missedPolls` is how down detection is defined for its devices, and a device no such automation covers is never declared down. Check `GET /automations/:id/removal-impact` before deleting or disabling one.
 
 ### PUT /automations/:id
 
