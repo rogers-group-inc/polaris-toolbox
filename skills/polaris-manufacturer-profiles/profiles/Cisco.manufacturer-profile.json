@@ -38,9 +38,10 @@
   ],
   "widgets": [],
   "layout": null,
+  "exportedAt": "2026-10-24T02:06:47.518Z",
   "_toolbox": {
-    "status": "shipped-seed",
-    "testedOn": null,
-    "note": "Exported from a fresh Polaris install: the Cisco profile Polaris seeds, resolving through the Cisco MIBs it also ships (CISCO-SMI, CISCO-PROCESS-MIB, CISCO-MEMORY-POOL-MIB)."
+    "status": "tested",
+    "testedOn": "a production Polaris install (exported 2026-10-23); models and firmware not yet recorded",
+    "date": "2026-10-23"
   }
 }

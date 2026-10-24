@@ -1,0 +1,266 @@
+{
+  "format": "polaris.manufacturer-profile",
+  "version": 1,
+  "manufacturer": "APC",
+  "matchPattern": null,
+  "mibs": [
+    {
+      "moduleName": "PowerNet-MIB",
+      "manufacturer": "APC",
+      "model": null
+    }
+  ],
+  "metrics": [
+    {
+      "metricKey": "model",
+      "symbol": null,
+      "symbolB": null,
+      "mib": null,
+      "mibStdKey": null,
+      "type": "scalar",
+      "transform": null,
+      "aggregate": "none",
+      "label": null,
+      "parsePattern": null,
+      "parseTemplate": null,
+      "sensorColumns": null,
+      "overrides": [
+        {
+          "assetType": "power",
+          "modelPattern": null,
+          "symbol": "upsBasicIdentModel",
+          "symbolB": null,
+          "mib": {
+            "moduleName": "PowerNet-MIB",
+            "manufacturer": "APC",
+            "model": null
+          },
+          "mibStdKey": null,
+          "type": "scalar",
+          "transform": null,
+          "aggregate": "none",
+          "label": null,
+          "parsePattern": "^(.+)$",
+          "parseTemplate": null,
+          "sensorColumns": null,
+          "order": 0
+        }
+      ]
+    }
+  ],
+  "widgets": [
+    {
+      "key": "w1",
+      "name": "Battery Capacity",
+      "symbol": "upsAdvBatteryCapacity",
+      "mib": {
+        "moduleName": "PowerNet-MIB",
+        "manufacturer": "APC",
+        "model": null
+      },
+      "type": "scalar",
+      "widgetType": "gauge",
+      "transform": null,
+      "displayOptions": {
+        "unit": "%",
+        "warningAt": 15,
+        "warningWhen": "below"
+      },
+      "order": 0,
+      "modelPattern": null,
+      "stateMap": null,
+      "labelSymbol": null,
+      "httpCheck": null,
+      "credential": null
+    },
+    {
+      "key": "w2",
+      "name": "UPS Status",
+      "symbol": "upsBasicOutputStatus",
+      "mib": {
+        "moduleName": "PowerNet-MIB",
+        "manufacturer": "APC",
+        "model": null
+      },
+      "type": "scalar",
+      "widgetType": "state",
+      "transform": null,
+      "displayOptions": {},
+      "order": 0,
+      "modelPattern": null,
+      "stateMap": {
+        "mode": "notEquals",
+        "values": [
+          "2"
+        ],
+        "trueLabel": "Alarm",
+        "falseLabel": "OK",
+        "trueIsProblem": true
+      },
+      "labelSymbol": null,
+      "httpCheck": null,
+      "credential": null
+    },
+    {
+      "key": "w3",
+      "name": "Battery Status",
+      "symbol": "upsBasicBatteryStatus",
+      "mib": {
+        "moduleName": "PowerNet-MIB",
+        "manufacturer": "APC",
+        "model": null
+      },
+      "type": "scalar",
+      "widgetType": "state",
+      "transform": null,
+      "displayOptions": {},
+      "order": 0,
+      "modelPattern": null,
+      "stateMap": {
+        "mode": "notEquals",
+        "values": [
+          "2"
+        ],
+        "trueLabel": "Alarm",
+        "falseLabel": "OK",
+        "trueIsProblem": true
+      },
+      "labelSymbol": null,
+      "httpCheck": null,
+      "credential": null
+    },
+    {
+      "key": "w4",
+      "name": "Replace Indicator",
+      "symbol": "upsAdvBatteryReplaceIndicator",
+      "mib": {
+        "moduleName": "PowerNet-MIB",
+        "manufacturer": "APC",
+        "model": null
+      },
+      "type": "scalar",
+      "widgetType": "state",
+      "transform": null,
+      "displayOptions": {},
+      "order": 0,
+      "modelPattern": null,
+      "stateMap": {
+        "mode": "equals",
+        "values": [
+          "2"
+        ],
+        "trueLabel": "Alarm",
+        "falseLabel": "OK",
+        "trueIsProblem": true
+      },
+      "labelSymbol": null,
+      "httpCheck": null,
+      "credential": null
+    },
+    {
+      "key": "w5",
+      "name": "Run Time Remaining",
+      "symbol": "upsAdvBatteryRunTimeRemaining",
+      "mib": {
+        "moduleName": "PowerNet-MIB",
+        "manufacturer": "APC",
+        "model": null
+      },
+      "type": "scalar",
+      "widgetType": "gauge",
+      "transform": "ticks_to_seconds",
+      "displayOptions": {},
+      "order": 0,
+      "modelPattern": null,
+      "stateMap": null,
+      "labelSymbol": null,
+      "httpCheck": null,
+      "credential": null
+    },
+    {
+      "key": "w6",
+      "name": "Last Fail Cause",
+      "symbol": "upsAdvInputLineFailCause",
+      "mib": {
+        "moduleName": "PowerNet-MIB",
+        "manufacturer": "APC",
+        "model": null
+      },
+      "type": "scalar",
+      "widgetType": "state",
+      "transform": null,
+      "displayOptions": {},
+      "order": 0,
+      "modelPattern": null,
+      "stateMap": {
+        "mode": "equals",
+        "values": [
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "10"
+        ],
+        "trueLabel": "Power Event",
+        "falseLabel": "No Power Event",
+        "trueIsProblem": true
+      },
+      "labelSymbol": null,
+      "httpCheck": null,
+      "credential": null
+    },
+    {
+      "key": "w7",
+      "name": "Battery Temperature",
+      "symbol": "upsAdvBatteryTemperature",
+      "mib": {
+        "moduleName": "PowerNet-MIB",
+        "manufacturer": "APC",
+        "model": null
+      },
+      "type": "scalar",
+      "widgetType": "gauge",
+      "transform": null,
+      "displayOptions": {},
+      "order": 0,
+      "modelPattern": null,
+      "stateMap": null,
+      "labelSymbol": null,
+      "httpCheck": null,
+      "credential": null
+    },
+    {
+      "key": "w8",
+      "name": "Output Load",
+      "symbol": "upsAdvOutputLoad",
+      "mib": {
+        "moduleName": "PowerNet-MIB",
+        "manufacturer": "APC",
+        "model": null
+      },
+      "type": "scalar",
+      "widgetType": "gauge",
+      "transform": null,
+      "displayOptions": {
+        "unit": "%",
+        "warningAt": 90
+      },
+      "order": 0,
+      "modelPattern": null,
+      "stateMap": null,
+      "labelSymbol": null,
+      "httpCheck": null,
+      "credential": null
+    }
+  ],
+  "layout": null,
+  "exportedAt": "2026-10-24T02:06:43.005Z",
+  "_toolbox": {
+    "status": "tested",
+    "testedOn": "a production Polaris install (exported 2026-10-23); models and firmware not yet recorded",
+    "date": "2026-10-23"
+  }
+}

@@ -31,8 +31,11 @@ it imports through the UI (**Import…** beside **+ Add Manufacturer**) and thro
 ```
 
 Every `<…>` is a placeholder: the symbols come from the operator's MIB (search it, or ask the
-operator to), never from memory. For a complete real file, see
-[../profiles/Fortinet.manufacturer-profile.json](../profiles/Fortinet.manufacturer-profile.json).
+operator to), never from memory. For complete real files, see
+[../profiles/Fortinet.manufacturer-profile.json](../profiles/Fortinet.manufacturer-profile.json)
+(metric rows and per-family overrides, including a sensor table) and
+[../profiles/APC.manufacturer-profile.json](../profiles/APC.manufacturer-profile.json)
+(gauge and state widgets).
 
 - **`metrics`** lists only the rows the profile sets; a row left out keeps "no opinion" on
   import. `metricKey` is `model`, `cpu`, `memory`, `temperature`, `interfaces`, `storage`,

@@ -5,22 +5,17 @@
   "matchPattern": "fortinet|fortigate|fortios",
   "mibs": [
     {
-      "moduleName": "FORTINET-CORE-MIB",
-      "manufacturer": "Fortinet",
-      "model": null
-    },
-    {
-      "moduleName": "FORTINET-FORTIGATE-MIB",
-      "manufacturer": "Fortinet",
-      "model": null
-    },
-    {
       "moduleName": "FORTINET-FORTISWITCH-MIB",
       "manufacturer": "Fortinet",
       "model": null
     },
     {
       "moduleName": "FORTINET-FORTIAP-MIB",
+      "manufacturer": "Fortinet",
+      "model": null
+    },
+    {
+      "moduleName": "FORTINET-FORTIGATE-MIB",
       "manufacturer": "Fortinet",
       "model": null
     }
@@ -41,15 +36,11 @@
       "sensorColumns": null,
       "overrides": [
         {
-          "assetType": null,
-          "modelPattern": "FortiSwitch",
+          "assetType": "switch",
+          "modelPattern": null,
           "symbol": "fsSysVersion",
           "symbolB": null,
-          "mib": {
-            "moduleName": "FORTINET-FORTISWITCH-MIB",
-            "manufacturer": "Fortinet",
-            "model": null
-          },
+          "mib": null,
           "mibStdKey": null,
           "type": "scalar",
           "transform": null,
@@ -61,15 +52,11 @@
           "order": 0
         },
         {
-          "assetType": "switch",
-          "modelPattern": null,
+          "assetType": null,
+          "modelPattern": "FortiSwitch",
           "symbol": "fsSysVersion",
           "symbolB": null,
-          "mib": {
-            "moduleName": "FORTINET-FORTISWITCH-MIB",
-            "manufacturer": "Fortinet",
-            "model": null
-          },
+          "mib": null,
           "mibStdKey": null,
           "type": "scalar",
           "transform": null,
@@ -86,11 +73,7 @@
       "metricKey": "cpu",
       "symbol": "fgSysCpuUsage",
       "symbolB": null,
-      "mib": {
-        "moduleName": "FORTINET-FORTIGATE-MIB",
-        "manufacturer": "Fortinet",
-        "model": null
-      },
+      "mib": null,
       "mibStdKey": null,
       "type": "scalar",
       "transform": null,
@@ -101,12 +84,12 @@
       "sensorColumns": null,
       "overrides": [
         {
-          "assetType": null,
-          "modelPattern": "FortiSwitch",
-          "symbol": "fsSysCpuUsage",
+          "assetType": "access_point",
+          "modelPattern": null,
+          "symbol": "fapCpuUsage",
           "symbolB": null,
           "mib": {
-            "moduleName": "FORTINET-FORTISWITCH-MIB",
+            "moduleName": "FORTINET-FORTIAP-MIB",
             "manufacturer": "Fortinet",
             "model": null
           },
@@ -121,8 +104,8 @@
           "order": 0
         },
         {
-          "assetType": "switch",
-          "modelPattern": null,
+          "assetType": null,
+          "modelPattern": "FortiSwitch",
           "symbol": "fsSysCpuUsage",
           "symbolB": null,
           "mib": {
@@ -161,12 +144,12 @@
           "order": 0
         },
         {
-          "assetType": "access_point",
+          "assetType": "switch",
           "modelPattern": null,
-          "symbol": "fapCpuUsage",
+          "symbol": "fsSysCpuUsage",
           "symbolB": null,
           "mib": {
-            "moduleName": "FORTINET-FORTIAP-MIB",
+            "moduleName": "FORTINET-FORTISWITCH-MIB",
             "manufacturer": "Fortinet",
             "model": null
           },
@@ -202,6 +185,26 @@
       "overrides": [
         {
           "assetType": null,
+          "modelPattern": "FortiAP",
+          "symbol": "fapMemoryUsage",
+          "symbolB": null,
+          "mib": {
+            "moduleName": "FORTINET-FORTIAP-MIB",
+            "manufacturer": "Fortinet",
+            "model": null
+          },
+          "mibStdKey": null,
+          "type": "scalar",
+          "transform": null,
+          "aggregate": "none",
+          "label": null,
+          "parsePattern": null,
+          "parseTemplate": null,
+          "sensorColumns": null,
+          "order": 0
+        },
+        {
+          "assetType": null,
           "modelPattern": "FortiSwitch",
           "symbol": "fsSysMemUsage",
           "symbolB": "fsSysMemCapacity",
@@ -241,26 +244,6 @@
           "order": 0
         },
         {
-          "assetType": null,
-          "modelPattern": "FortiAP",
-          "symbol": "fapMemoryUsage",
-          "symbolB": null,
-          "mib": {
-            "moduleName": "FORTINET-FORTIAP-MIB",
-            "manufacturer": "Fortinet",
-            "model": null
-          },
-          "mibStdKey": null,
-          "type": "scalar",
-          "transform": null,
-          "aggregate": "none",
-          "label": null,
-          "parsePattern": null,
-          "parseTemplate": null,
-          "sensorColumns": null,
-          "order": 0
-        },
-        {
           "assetType": "access_point",
           "modelPattern": null,
           "symbol": "fapMemoryUsage",
@@ -284,34 +267,38 @@
     },
     {
       "metricKey": "temperature",
-      "symbol": "fgHwSensorEntValue",
+      "symbol": null,
       "symbolB": null,
-      "mib": {
-        "moduleName": "FORTINET-FORTIGATE-MIB",
-        "manufacturer": "Fortinet",
-        "model": null
-      },
+      "mib": null,
       "mibStdKey": null,
-      "type": "table",
+      "type": "scalar",
       "transform": null,
       "aggregate": "none",
       "label": null,
       "parsePattern": null,
       "parseTemplate": null,
-      "sensorColumns": {
-        "nameSymbol": "fgHwSensorEntName",
-        "alarmSymbol": "fgHwSensorEntAlarmStatus",
-        "alarmMap": {
-          "mode": "nonzero",
-          "values": [],
-          "trueLabel": "Alarm",
-          "falseLabel": "OK",
-          "trueIsProblem": true
-        },
-        "sensorClass": null,
-        "transform": null
-      },
+      "sensorColumns": null,
       "overrides": [
+        {
+          "assetType": "access_point",
+          "modelPattern": null,
+          "symbol": "fapTemperature",
+          "symbolB": null,
+          "mib": {
+            "moduleName": "FORTINET-FORTIAP-MIB",
+            "manufacturer": "Fortinet",
+            "model": null
+          },
+          "mibStdKey": null,
+          "type": "scalar",
+          "transform": null,
+          "aggregate": "none",
+          "label": "System",
+          "parsePattern": null,
+          "parseTemplate": null,
+          "sensorColumns": null,
+          "order": 0
+        },
         {
           "assetType": null,
           "modelPattern": "FortiAP",
@@ -333,23 +320,35 @@
           "order": 0
         },
         {
-          "assetType": "access_point",
-          "modelPattern": null,
-          "symbol": "fapTemperature",
+          "assetType": null,
+          "modelPattern": "201G",
+          "symbol": "fgHwSensorEntValue",
           "symbolB": null,
           "mib": {
-            "moduleName": "FORTINET-FORTIAP-MIB",
+            "moduleName": "FORTINET-FORTIGATE-MIB",
             "manufacturer": "Fortinet",
             "model": null
           },
           "mibStdKey": null,
-          "type": "scalar",
+          "type": "table",
           "transform": null,
           "aggregate": "none",
-          "label": "System",
+          "label": null,
           "parsePattern": null,
           "parseTemplate": null,
-          "sensorColumns": null,
+          "sensorColumns": {
+            "nameSymbol": "fgHwSensorEntName",
+            "alarmSymbol": "fgHwSensorEntAlarmStatus",
+            "alarmMap": {
+              "mode": "nonzero",
+              "values": [],
+              "trueLabel": "Alarm",
+              "falseLabel": "OK",
+              "trueIsProblem": true
+            },
+            "sensorClass": null,
+            "transform": null
+          },
           "order": 0
         }
       ]
@@ -409,13 +408,74 @@
           "order": 0
         }
       ]
+    },
+    {
+      "metricKey": "wirelessStations",
+      "symbol": "fapStationTable",
+      "symbolB": null,
+      "mib": {
+        "moduleName": "FORTINET-FORTIAP-MIB",
+        "manufacturer": "Fortinet",
+        "model": null
+      },
+      "mibStdKey": null,
+      "type": "table",
+      "transform": null,
+      "aggregate": "none",
+      "label": null,
+      "parsePattern": null,
+      "parseTemplate": null,
+      "sensorColumns": null,
+      "overrides": [
+        {
+          "assetType": null,
+          "modelPattern": "FortiAP",
+          "symbol": "fapStationTable",
+          "symbolB": null,
+          "mib": {
+            "moduleName": "FORTINET-FORTIAP-MIB",
+            "manufacturer": "Fortinet",
+            "model": null
+          },
+          "mibStdKey": null,
+          "type": "table",
+          "transform": null,
+          "aggregate": "none",
+          "label": null,
+          "parsePattern": null,
+          "parseTemplate": null,
+          "sensorColumns": null,
+          "order": 0
+        },
+        {
+          "assetType": "access_point",
+          "modelPattern": null,
+          "symbol": "fapStationTable",
+          "symbolB": null,
+          "mib": {
+            "moduleName": "FORTINET-FORTIAP-MIB",
+            "manufacturer": "Fortinet",
+            "model": null
+          },
+          "mibStdKey": null,
+          "type": "table",
+          "transform": null,
+          "aggregate": "none",
+          "label": null,
+          "parsePattern": null,
+          "parseTemplate": null,
+          "sensorColumns": null,
+          "order": 0
+        }
+      ]
     }
   ],
   "widgets": [],
   "layout": null,
+  "exportedAt": "2026-10-24T02:06:51.978Z",
   "_toolbox": {
-    "status": "polaris-definition",
-    "testedOn": null,
-    "note": "Built from the vendor mapping Polaris ships (vendorTelemetryProfiles + the rule 132 sensor-table columns), the same rows Polaris seeded on Fortinet installs. Replace with an export from a tested install when one exists."
+    "status": "tested",
+    "testedOn": "a production Polaris install (exported 2026-10-23); models and firmware not yet recorded",
+    "date": "2026-10-23"
   }
 }
