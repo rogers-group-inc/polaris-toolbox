@@ -10,7 +10,7 @@ The lists below are what the server accepted when this was written.
 
 | `type` | Shape (required keys **bold**) | Scoped to devices? |
 |---|---|---|
-| `asset_metric` | **`metric`**, **`operator`**, **`threshold`**, `aggregation`, `windowSec`, `windowPolls`, `forPolls`, `dimensionFilter`, `ignoreAtOrAbove`, `includeServer` | yes |
+| `asset_metric` | **`metric`**, **`operator`**, **`threshold`**, `aggregation`, `windowSec`, `windowPolls`, `forPolls`, `dimensionFilter`, `ignoreAtOrAbove`, `includeServer`, `forecastDays` | yes |
 | `asset_state` | **`field`**, **`operator`**, **`value`** (string / number / boolean), `forPolls`, `dimensionFilter`, `missedPolls`, `alertWhenDependencyDown` | yes |
 | `host_metric` | **`metric`**, **`operator`**, **`threshold`**, `aggregation`, `windowSec`, `windowPolls`, `forPolls` | **no**: the scope is discarded |
 | `event` | **`actionPattern`** (glob), `resourceType`, `minLevel`, `detailsMatch` | yes, the filter applies to the event's **subject** (rule 46) |
@@ -32,6 +32,7 @@ Path Monitor automations are stored as `asset_metric` (a `path*` metric) or `cha
 | `memPct` | % | — |
 | `memUsedBytes` | bytes | — |
 | `memDaysUntilFull` | days | — (one reading per device; a forecast, see below) |
+| `memForecastPct` | % | — (one reading per device; memory projected `forecastDays` out, see below) |
 | `sessionCount` | — | — |
 | `responseTimeMs` | ms | — |
 | `uptimeSec` | sec | — |
@@ -61,6 +62,16 @@ Path Monitor automations are stored as `asset_metric` (a `path*` metric) or `cha
   (% of installed), projected to 100%. It needs at least 7 daily points; a host whose memory is flat,
   shrinking or new produces no reading. Use `<=`, e.g. `<= 14`. Aggregation and a poll hold add nothing —
   it moves about once a day. The number matches the forecast headline on the asset's Memory chart.
+- **`memForecastPct`** (**Memory forecast**) uses the same trend to ask when memory reaches a level
+  you choose. `forecastDays` (1–365, default 14) is the horizon. The wizard shows it as **projected
+  to be reached within N days** in place of the aggregation. The reading is the memory in use (%)
+  the trend reaches that many days out, capped at 100. So the `threshold` and every severity band's
+  `threshold` are **memory levels**, and they all share the one horizon. Use `>=`, e.g.
+  `{"metric": "memForecastPct", "operator": ">=", "threshold": 80, "forecastDays": 14}` with
+  severity `warning` and a band `{"threshold": 95, "severity": "critical"}`. These can be the same
+  levels as a `memPct` automation. It needs at least 7 daily points. A host whose memory is flat or
+  shrinking reads null, so it never meets, and a live alert clears when growth stops. The alert reads
+  "Memory is projected to reach 86 % within 14 days".
 - **`customStateValue`** needs `dimensionFilter.stateProbeId` (an id from `/schema` →
   `stateProbes`). `stateRowPattern` matches the row's *label*, and blank means every row, one alert each.
   **`customWidgetValue`** needs `widgetId` (from `/schema` → `customWidgets`). **`path*`**
