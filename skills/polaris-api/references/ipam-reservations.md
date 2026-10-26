@@ -49,4 +49,4 @@ Release. `204`; `409` when already released/expired or device-owned.
 
 _Gate: reservations:read_
 
-Reservations awaiting a FortiGate DHCP push (`{ reservations, count }`; `/push-queue/count` returns just `{ count }`). Retry one via POST `/reservations/:id/retry-push` → `{ outcome, reservation }`.
+Reservations awaiting a FortiGate DHCP push (`{ reservations, count }`; `/push-queue/count` returns just `{ count, failed }`, `failed` being the rows that hit a permanent error and need an operator). Retry one via POST `/reservations/:id/retry-push` → `{ outcome, reservation }`.
