@@ -31,6 +31,7 @@ Path Monitor automations are stored as `asset_metric` (a `path*` metric) or `cha
 | `cpuCorePct` | % | — (one alert per device naming the hot cores; hold counted **per core**, rule 89) |
 | `memPct` | % | — |
 | `memUsedBytes` | bytes | — |
+| `memDaysUntilFull` | days | — (one reading per device; a forecast, see below) |
 | `sessionCount` | — | — |
 | `responseTimeMs` | ms | — |
 | `uptimeSec` | sec | — |
@@ -56,6 +57,10 @@ Path Monitor automations are stored as `asset_metric` (a `path*` metric) or `cha
   Unraid / TrueNAS hosts. While the device has an open `cpuPct` alert from any automation, the
   per-core alert stays quiet or clears as *superseded*.
 - **`storageDaysUntilFull`** is a forecast. A filesystem that is not growing produces no reading.
+- **`memDaysUntilFull`** is the memory twin: the 30-day trend of the daily average memory in use
+  (% of installed), projected to 100%. It needs at least 7 daily points; a host whose memory is flat,
+  shrinking or new produces no reading. Use `<=`, e.g. `<= 14`. Aggregation and a poll hold add nothing —
+  it moves about once a day. The number matches the forecast headline on the asset's Memory chart.
 - **`customStateValue`** needs `dimensionFilter.stateProbeId` (an id from `/schema` →
   `stateProbes`). `stateRowPattern` matches the row's *label*, and blank means every row, one alert each.
   **`customWidgetValue`** needs `widgetId` (from `/schema` → `customWidgets`). **`path*`**
