@@ -16,7 +16,7 @@ Query parameters:
 - `search` — case-insensitive match across hostname, DNS name, IP, MAC, asset tag, and assigned-to.
 - `status`, `assetType`, `monitor` — comma-separated multi-value. `monitor` accepts `Unmonitored, Monitored, Dep. Down, Up, Missed, Warning, Down, Recovering, Passive, Pending`.
 - Per-column text filters: pass the column name (`hostname`, `ipAddress`, `serialNumber`, `assetTag`, `manufacturer`, `model`, `os`, `macAddress`, `assignedTo`, `purchaseOrder`, `dnsName`, `description`) plus an optional `Op` of `contains` (default), `not_contains`, `empty`, `is_not_empty`.
-- `ipAddress` also takes `ipAddressOp=in_networks`: a comma-separated list of IPv4 networks, matched when the primary IP falls in *any* of them. Each entry is a partial address (`10.1` = 10.1.0.0/16), a full address (exact) or a CIDR (`10.1.16.0/20`); at most 50, and an invalid entry is a `400`.
+- `ipAddress` also takes `ipAddressOp=in_networks`: a comma-separated list of IPv4 networks, matched when the primary IP falls in *any* of them. Each entry is a partial address (`10.1` = 10.1.0.0/16), a suffix with a leading dot (`.50` = last octet 50, `.1.50`), a full address (exact) or a CIDR (`10.1.16.0/20`); at most 50, and an invalid entry is a `400`.
 - `department` (contains match), `lastSeenFrom` / `lastSeenTo` (`YYYY-MM-DD`).
 - `sortBy` (whitelisted column names; an unknown value is a `400`) + `sortDir` (`asc` default when sorting; default order without `sortBy` is newest first).
 
