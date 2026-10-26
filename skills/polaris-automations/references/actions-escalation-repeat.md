@@ -97,6 +97,11 @@ diagnosing "the wrong people were told".
   puts a matching one in **Reset Action**, which follows it until you edit it. Over the API you must write
   `resetActions` yourself. Without them a recovery is silent: the alert resolves, and
   `notification.auto_cleared` is logged.
+- What the all-clear looks like depends on the channel. Email carries a composed recovery
+  body. Web Push, Slack, Teams and Pushbullet have no composed body, so they get a
+  `[RESOLVED] <host>` title with the recovery sentence ("Resolved: Port down — switch-1
+  recovered") in green. A push all-clear replaces the alert's tray entry, carries no
+  Acknowledge action and is never pinned on screen.
 - Not "recovered", so **no** reset actions: superseded by a down device or by a more specific rule,
   cleared by a maintenance window (device-down), out of scope.
 
@@ -179,9 +184,10 @@ windows is allowed.
 | Event | Effect |
 |---|---|
 | Acknowledge | stops escalation and reminders where `stopOn` says so. The alert stays live |
-| Clear, or the reset condition becomes true | ends it, runs `resetActions` |
+| Reset condition becomes true | ends it, runs `resetActions` |
+| Operator clears it | ends it, runs `resetActions`. It does **not** mute the condition: one still true re-earns its hold and raises a **new** alert. Acknowledge to keep a known problem quiet |
 | Leaves scope / stops being monitored | cleared `out_of_scope` |
-| Maintenance window opens | device-down alerts cleared. Others paused |
+| Maintenance window opens | device-down alerts cleared. Others paused. A device still down when the window ends re-earns its hold and fires anew |
 | Device goes down | other alerts superseded (rule 29) |
 | Parent genuinely down | retired by dependency suppression (rule 38) |
 | More specific rule takes the device | superseded (rule 18) |

@@ -57,7 +57,7 @@ stored, normalized body plus `id`, `createdAt`, `updatedAt`.
 
 | `mode` | Allowed on | Fields | Behaviour |
 |---|---|---|---|
-| `manual` | any | — | cleared only by an operator |
+| `manual` | any | — | cleared only by an operator. A clear while the condition still holds raises a new alert once the hold is re-earned |
 | `auto` | any | `clearThreshold?`, `sustainPolls?` (0–100), `sustainSec?` | clears when the trigger is no longer true, held for `sustainPolls` readings |
 | `timed` | any | `afterSec` (1–2592000) **required** | clears after the time elapses |
 | `condition` | `asset_metric`, `asset_state`, `host_metric`, `composite` | `condition` (AND/OR tree, ≤ 3 deep, ≤ 10 leaves) **required**; `sustainPolls?` | while firing, the tree is the **only** recovery authority (rule 32). Leaves must be the same kind as the trigger (device vs host) |
