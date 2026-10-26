@@ -103,6 +103,9 @@ Single-brace `{token}`. Not `{{ }}`.
 | `{dimension.first}` | the one component the alert leads with — the worst, and the one its charts are about. Use this, not `{dimension}`, when the script acts on ONE port or mount |
 | `{dimension.list}` | every component the alert names, uncapped |
 | `{conditions}` | multi-condition summary, e.g. `2 of 3 conditions met` (composite triggers only) |
+| `{forecast.level}` | memory forecast only: the severity level being counted down to, e.g. `Serious` (empty on every other trigger) |
+| `{forecast.days}` | memory forecast only: whole days until memory reaches that level, or `<1` |
+| `{forecast.target}` | memory forecast only: that level's threshold with its unit, e.g. `85 %` |
 | `{trigger.summary}` | the trigger in the builder's words, with the observed value — free text |
 | `{message}` | the rendered in-app notification message — free text |
 | `{severity}` | rule severity, e.g. `warning` |

@@ -10,7 +10,7 @@ The lists below are what the server accepted when this was written.
 
 | `type` | Shape (required keys **bold**) | Scoped to devices? |
 |---|---|---|
-| `asset_metric` | **`metric`**, **`operator`**, **`threshold`**, `aggregation`, `windowSec`, `windowPolls`, `forPolls`, `dimensionFilter`, `ignoreAtOrAbove`, `includeServer`, `forecastDays` | yes |
+| `asset_metric` | **`metric`**, **`operator`**, **`threshold`**, `aggregation`, `windowSec`, `windowPolls`, `forPolls`, `dimensionFilter`, `ignoreAtOrAbove`, `includeServer`, `forecastDays`, `levelsFromRuleId` | yes |
 | `asset_state` | **`field`**, **`operator`**, **`value`** (string / number / boolean), `forPolls`, `dimensionFilter`, `missedPolls`, `alertWhenDependencyDown` | yes |
 | `host_metric` | **`metric`**, **`operator`**, **`threshold`**, `aggregation`, `windowSec`, `windowPolls`, `forPolls` | **no**: the scope is discarded |
 | `event` | **`actionPattern`** (glob), `resourceType`, `minLevel`, `detailsMatch` | yes, the filter applies to the event's **subject** (rule 46) |
@@ -32,7 +32,7 @@ Path Monitor automations are stored as `asset_metric` (a `path*` metric) or `cha
 | `memPct` | % | — |
 | `memUsedBytes` | bytes | — |
 | `memDaysUntilFull` | days | — (one reading per device; a forecast, see below) |
-| `memForecastPct` | % | — (one reading per device; memory projected `forecastDays` out, see below) |
+| `memForecastPct` | % | — (one reading per device; counts down to the next severity level, see below) |
 | `sessionCount` | — | — |
 | `responseTimeMs` | ms | — |
 | `uptimeSec` | sec | — |
@@ -62,16 +62,27 @@ Path Monitor automations are stored as `asset_metric` (a `path*` metric) or `cha
   (% of installed), projected to 100%. It needs at least 7 daily points; a host whose memory is flat,
   shrinking or new produces no reading. Use `<=`, e.g. `<= 14`. Aggregation and a poll hold add nothing —
   it moves about once a day. The number matches the forecast headline on the asset's Memory chart.
-- **`memForecastPct`** (**Memory forecast**) uses the same trend to ask when memory reaches a level
-  you choose. `forecastDays` (1–365, default 14) is the horizon. The wizard shows it as **projected
-  to be reached within N days** in place of the aggregation. The reading is the memory in use (%)
-  the trend reaches that many days out, capped at 100. So the `threshold` and every severity band's
-  `threshold` are **memory levels**, and they all share the one horizon. Use `>=`, e.g.
-  `{"metric": "memForecastPct", "operator": ">=", "threshold": 80, "forecastDays": 14}` with
-  severity `warning` and a band `{"threshold": 95, "severity": "critical"}`. These can be the same
-  levels as a `memPct` automation. It needs at least 7 daily points. A host whose memory is flat or
-  shrinking reads null, so it never meets, and a live alert clears when growth stops. The alert reads
-  "Memory is projected to reach 86 % within 14 days".
+- **`memForecastPct`** (**Memory forecast**) uses the same trend to count down to a **severity level**.
+  The `threshold` and every severity band's `threshold` are **memory levels in %**, and `forecastDays`
+  (1–365, default 14) is the window. The wizard shows it as **projected to be reached within N days,
+  using …**. The alert counts down to the **next level the device has not reached**, and fires at that
+  level's severity when it is due inside the window. With serious ≥ 85 and critical ≥ 90, a host at
+  80 % fires *serious* ("COWAN-61F-1 — Days until Serious: 10"). Past 85 % it moves to *critical*
+  ("Days until Critical: N"). Past every level it goes quiet, because the `memPct` automation covers
+  that. A flat or shrinking host never fires, and a live alert clears when growth stops. It needs at
+  least 7 daily points. Use `>=`.
+  - **Levels from a `memPct` automation:** set `levelsFromRuleId` to the id of an automation whose trigger
+    is a single `memPct` condition compared with `>` / `>=` (anything else is a 400). On save Polaris
+    copies its threshold, operator, base severity and bands onto the forecast. At every evaluation it
+    re-reads them, so editing that automation's percentages moves the forecast. The forecast keeps its
+    own actions per severity. Send any valid `threshold` (the source's is stored over it), e.g.
+    `{"metric": "memForecastPct", "operator": ">=", "threshold": 85, "forecastDays": 14, "levelsFromRuleId": "<memPct automation id>"}`.
+  - **The alert:** the message is "<asset> — Days until Serious: N", and `{trigger.summary}` reads
+    "Days until Serious: N — memory is 79 % and growing 0.5 %/day toward Serious at 85 %". The tokens
+    `{forecast.level}` / `{forecast.days}` / `{forecast.target}` carry the parts. The email draws the
+    **memory forecast chart** in `{chart.memory}` (30 daily points, the trend forward, the level as the
+    dashed line, the change per day in the caption) and drops `{chart.cpu}`. `memDaysUntilFull` alerts
+    draw the same forecast chart, toward 100 %.
 - **`customStateValue`** needs `dimensionFilter.stateProbeId` (an id from `/schema` →
   `stateProbes`). `stateRowPattern` matches the row's *label*, and blank means every row, one alert each.
   **`customWidgetValue`** needs `widgetId` (from `/schema` → `customWidgets`). **`path*`**
