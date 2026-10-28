@@ -10,7 +10,7 @@ A check can also run from **the Polaris server itself** (`runOnServer: true`), a
 
 _Gate: pathChecks:read_
 
-`{ checks: [...] }`, by name. Each check carries its definition (below) plus a fleet summary: `sourceCount` (hosts running it), `okCount` / `failCount` (hosts whose latest run passed / failed — a host with no result yet is in neither), `unexpectedCount` (of the failing, those whose run still got an HTTP answer, just not the expected status or body) and `lastRunAt`.
+`{ checks: [...] }`, by name. Each check carries its definition (below) plus a fleet summary: `sourceCount` (hosts running it), `okCount` / `failCount` (hosts whose latest run passed / failed — a host with no result yet is in neither), `unexpectedCount` (of the failing, those whose run still got an HTTP answer, just not the expected status or body) and `lastRunAt`. `maintenance: { inMaintenance, windows[] }` says whether it is paused by a maintenance schedule (see maintenance.md) right now; each window carries `scheduleId, scheduleName, startedAt` and the current occurrence's end as `until` (the server's wall clock, `"YYYY-MM-DDTHH:MM"`) and `untilUtc`.
 
 ```bash
 curl -H "Authorization: Bearer $POLARIS_TOKEN" \

@@ -69,6 +69,7 @@ block with active reservations), 429 (back off — machine-facing limiters are g
 | IPAM: networks (subnets), next-available, bulk allocate, archive, exclusions | [references/ipam-subnets.md](references/ipam-subnets.md) |
 | IPAM: reservations, next-available, push queue, collision semantics | [references/ipam-reservations.md](references/ipam-reservations.md) |
 | Path Monitor: agent-run path checks, their per-host results, history and traceroutes | [references/path-monitor.md](references/path-monitor.md) |
+| maintenance schedules for assets or path checks: create / replace / delete, `?target=`, server-local times, ending a path check's maintenance now | [references/maintenance.md](references/maintenance.md) |
 | automations: rule CRUD, the `/schema` vocabulary, preview / dry run, masked `api_call` headers, removal impact | [references/automations.md](references/automations.md) |
 | the MIB Database: upload, structure (symbols, OIDs, enums), MIB-aware walk, the bundled standard MIBs | [references/mib-database.md](references/mib-database.md) |
 | manufacturer profiles: metric rows, overrides, custom widgets, state probes, widget switches, export / import, aliases | [references/manufacturer-profiles.md](references/manufacturer-profiles.md) |
