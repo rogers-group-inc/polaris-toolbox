@@ -210,6 +210,9 @@ Component keys: `ifNamePattern` (≤ 1000, `|` list), `sensorClass` (`temperatur
 `voltage` `current` `optical` `poe` `power` `disk` `other`), `sensorNamePattern`,
 `mountPathPattern`, `sdwanRulePattern`, `healthCheck` / `link` (≤ 1000, `|` lists),
 `sdwanMemberIp` (`"== <ip>"` or `"!= <ip>"`, SD-WAN member conditions only, rule 98),
+`ifTag` (≤ 1000, `|` list of WHOLE tag names, case-insensitive, matched against the port's
+tags — manual and auto; the interface conditions only — oper / admin status, IP, PoE, in / out
+bps and error rate — rule 133(g); a port without the tag never alerts and loses an open alert),
 `tunnelName`, `widgetId`, `processNamePattern`, `stateProbeId`, `stateRowPattern`, `checkId`.
 
 Device-identifier keys (valid on every asset metric / state leaf): `hostnamePattern`,

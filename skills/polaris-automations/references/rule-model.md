@@ -36,6 +36,7 @@ stored, normalized body plus `id`, `createdAt`, `updatedAt`.
 | `quietTime` | `null` · `{ "ignoreGlobal": true }` · a policy | `null` | `null` = the global quiet times apply |
 | `requireAckNote` | boolean | `false` | acknowledging needs a note. Per band: `followUp.requireAckNote` |
 | `groupByAsset` | boolean | `false` | one alert per device for per-component triggers (rule 75). Refused elsewhere |
+| `severityFromPriorityTag` | boolean | `false` | rule 136(e). On a bare `monitorStatus == down` (the device's tags) or `ifOperStatus == down` (the port's tags) only: the alert takes the HIGHEST built-in Priority tag (Notice … Critical, case-insensitive) as its severity, and a device / port with no Priority tag does **not** alert. `severity` is then only a stored fallback. Refused on any other trigger and beside `severityBands`. A full-record PUT that omits it turns it OFF |
 | `messageTemplate` | string ≤ 2000, nullable | `null` | the in-app alert text; `{token}` vocabulary |
 | `emailComposition` | `{ subjectTemplate?, bodyTextTemplate?, bodyHtmlTemplate?, cc?, bcc? }`, nullable | `null` | rule-level email override. A notify action's own `emailComposition` wins |
 | `cooldownSec` | int 0–2592000, nullable | `null` | the engine skips a re-fire for the same rule, device and component inside this many seconds |
