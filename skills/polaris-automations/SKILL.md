@@ -69,9 +69,10 @@ and name the gate that applied.
 9. **Pinned components gate everything dimensioned** (rule 57). Interface, IPsec tunnel and similar conditions
    read only pinned members. An unpinned port never alerts, however the rule is written. The one exception is
    `poeStatus == fault`, which covers every PoE port.
-10. **A device that goes down takes its other alerts with it** (rule 29). Its open CPU,
-    interface, sensor and SD-WAN alerts clear as *superseded* without sending "resolved". Nothing new fires
-    about the device while it is down.
+10. **A device that goes down hands off only its response-time and loss alerts** (rule 29). Its open
+    response-time, packet-loss and polls-failing alerts clear as *superseded* without sending "resolved",
+    and nothing new fires on them while it is down. Every other alert (CPU, memory, forecasts, interfaces,
+    sensors, SD-WAN) stays open through the outage, so a flapping link does not re-fire it.
 11. **Maintenance pauses alerts; quiet time holds messages.** A maintenance window stops polling, clears
     device-down alerts, and pauses every other open alert (rule 16). Quiet time still raises
     the alert, but holds the emails and pushes, then sends a summary when it ends (rule 92).

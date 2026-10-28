@@ -102,7 +102,8 @@ diagnosing "the wrong people were told".
   `[RESOLVED] <host>` title with the recovery sentence ("Resolved: Port down — switch-1
   recovered") in green. A push all-clear replaces the alert's tray entry, carries no
   Acknowledge action and is never pinned on screen.
-- Not "recovered", so **no** reset actions: superseded by a down device or by a more specific rule,
+- Not "recovered", so **no** reset actions: a response-time / loss / polls-failing alert superseded by
+  a down device, superseded by a more specific rule,
   cleared by a maintenance window (device-down), out of scope.
 
 ## Severity bands
@@ -188,7 +189,7 @@ windows is allowed.
 | Operator clears it | ends it, runs `resetActions`. It does **not** mute the condition: one still true re-earns its hold and raises a **new** alert. Acknowledge to keep a known problem quiet |
 | Leaves scope / stops being monitored | cleared `out_of_scope` |
 | Maintenance window opens | device-down alerts cleared. Others paused. A device still down when the window ends re-earns its hold and fires anew |
-| Device goes down | other alerts superseded (rule 29) |
+| Device goes down | response-time, packet-loss and polls-failing alerts superseded; every other alert stays open (rule 29) |
 | Parent genuinely down | retired by dependency suppression (rule 38) |
 | More specific rule takes the device | superseded (rule 18) |
 | Pin removed | that component's alert clears (rule 57) |

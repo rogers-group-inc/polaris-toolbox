@@ -116,15 +116,22 @@ All assets < Device type < OS < Manufacturer < Model < Tag < Region < IP block <
   wouldBecomePassive, sampleHostnames }`. `wouldBecomePassive` devices stop being declared
   down. A fleet with no down automation at all writes a one-off `monitor.down_detection_absent` warning Event.
 
-## A device that goes down takes its other alerts with it (rule 29)
+## A device that goes down hands off its response-time and loss alerts (rule 29)
 
-When a device is confirmed `down`, its open alerts about anything it reports (CPU, memory,
-interfaces, sensors, SD-WAN, IPsec, the failing-minutes fields) clear as *superseded*. No
-"resolved" is sent and no reset actions run. Nothing new fires about the device until it comes back,
-then a still-bad condition fires again once its hold is met. This does not apply to: the
-down alert itself; facts an outage does not change (`status`, `quarantined`,
-`firmwareVsPrimary`, `tag`, `dependencySuppressed`); path checks; a composite containing any of
-those; devices that are `passive`, `unknown` or `recovering`.
+When a device is confirmed `down`, its open alerts on readings made of the outage clear as
+*superseded*: `responseTimeMs`, `probeLossPct`, and the failing-minutes fields
+(`telemetryFailingMinutes`, `systemInfoFailingMinutes`). No "resolved" is sent and no reset
+actions run. Nothing new fires on those readings until the device comes back, then a still-bad
+condition fires again once its hold is met. A composite hands off only when every condition in it
+would.
+
+Every other alert stays open through the outage: CPU, memory, `memForecastPct` /
+`memDaysUntilFull` / `storageDaysUntilFull`, interfaces, sensors, SD-WAN, IPsec, FortiLink, path
+checks, and held facts (`status`, `quarantined`, `firmwareVsPrimary`, `tag`,
+`dependencySuppressed`). An open alert freezes while no readings arrive and resolves through its own
+automation once the device reports healthy. So a CPU or SD-WAN alert open when its device goes dark
+sits beside the down alert, and mails "resolved" after the device returns. Only a `down` device
+counts: `passive`, `unknown` and `recovering` have no down alert to hand to.
 
 ## Maintenance windows (rule 16)
 
