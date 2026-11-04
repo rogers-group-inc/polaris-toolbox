@@ -52,8 +52,10 @@ composite) ignores the scope.
   interfaces were never collected matches no positive rule.
 - Values a scope can name (manufacturers, models, IPAM networks) come from
   `GET /automations/scope-options`. Device and contact filters elsewhere offer extra fields
-  (`osVersion`, `department`, `location`, `fortigate`, the `matches` wildcard). **An automation's scope
-  refuses those.**
+  (`osVersion`, `department`, `location`, `fortigate`, `nativeVlan` — "Native VLAN", `equals` /
+  `notEquals` a VLAN id 1–4094 on any port, trunks included — and the `matches` wildcard). **An
+  automation's scope refuses those.** On a tag's auto-assign filter, a `nativeVlan` leaf also tags
+  the matching device's PORTS on that VLAN (Polaris business rule 133).
 - Check the real reach with `POST /automations/preview { "scope": {...} }`, which lists the devices it selects.
 
 ## The gate every alert passes (rule 37)

@@ -57,7 +57,7 @@ Creating a device and putting it under monitoring is **two calls**: `POST /asset
 
 _Gate: assets:read_
 
-Ask, before creating or re-addressing a device, whether an address is already in use. Query: `ip` (required), `excludeAssetId` (the asset being edited, so it is not reported as colliding with itself), and optionally `assetType` and `macAddress` for the incoming device. Returns `{ ip, holders[], wouldConflict, qualifiedBy, canMerge }`: every network-present asset already recording the address (each with `claimCurrent` — a stale record is listed but does not collide), whether saving would raise a Duplicate IP conflict, and whether the caller may merge assets (`assets:fullwrite`). The answer is computed with the same rules the save applies, so a `wouldConflict: true` here is a conflict the write will raise. `400` on an invalid address.
+Ask, before creating or re-addressing a device, whether an address is already in use. Query: `ip` (required), `excludeAssetId` (the asset being edited, so it is not reported as colliding with itself), and optionally `assetType` and `macAddress` for the incoming device. Returns `{ ip, holders[], wouldConflict, qualifiedBy, canMerge }`: every network-present asset already recording the address (each with `claimCurrent` — a stale record is listed but does not collide), whether saving would raise a Duplicate IP conflict, and whether the caller may merge assets (`assetMerge:write`). The answer is computed with the same rules the save applies, so a `wouldConflict: true` here is a conflict the write will raise. `400` on an invalid address.
 
 ```bash
 curl -H "Authorization: Bearer $POLARIS_TOKEN"   "$POLARIS_URL/api/v1/assets/ip-check?ip=10.20.30.4&assetType=switch"
