@@ -22,7 +22,7 @@ One network including its block and full `reservations[]`.
 
 _Gate: subnets:read_
 
-The per-address map: `{ subnet, ips, ipv6, totalIps, page, pageSize }`, each `ips[]` entry `{ address, type, reservation, assetId }`. Paged via `page` (default 1) + `pageSize` (default 256, max 65536). IPv6 networks list only reservation-backed addresses.
+The per-address map: `{ subnet, ips, ipv6, totalIps, page, pageSize }`, each `ips[]` entry `{ address, type, reservation, assetId }`. Paged via `page` (default 1) + `pageSize` (default 256, max 65536). IPv6 networks list only reservation-backed addresses. `subnet.canEdit` says whether the caller may change the network (and run its Discover), and each `reservation.canEdit` whether they may edit or release that reservation — the per-row verdicts described under Ownership and tags.
 
 ### POST /subnets
 
