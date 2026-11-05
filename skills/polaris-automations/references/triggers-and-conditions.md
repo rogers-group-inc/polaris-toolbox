@@ -87,6 +87,10 @@ Path Monitor automations are stored as `asset_metric` (a `path*` metric) or `cha
     message and stored context in place whenever the level or whole-day count moves (6 → 5 → 4), so
     reminders quote today's number. Nothing is re-sent and no Event is written. An alert in an alert group
     keeps the count it fired with.
+  - **A reboot restarts the forecast:** a host rebooted inside the 30-day lookback (seen from its uptime:
+    the earlier of `lastRebootAt` and `lastMonitorAt - lastUptimeSec`) is fitted only on the days after its
+    boot day. Until it has 7 of them again, `memForecastPct` and `memDaysUntilFull` read null for it, so a live
+    forecast alert ends at the reboot. Hosts that report no uptime (ICMP / SSH / WinRM only) keep the 30-day fit.
 - **`customStateValue`** needs `dimensionFilter.stateProbeId` (an id from `/schema` →
   `stateProbes`). `stateRowPattern` matches the row's *label*, and blank means every row, one alert each.
   **`customWidgetValue`** needs `widgetId` (from `/schema` → `customWidgets`). **`path*`**
