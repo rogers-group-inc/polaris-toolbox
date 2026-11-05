@@ -83,6 +83,10 @@ Path Monitor automations are stored as `asset_metric` (a `path*` metric) or `cha
     **memory forecast chart** in `{chart.memory}` (30 daily points, the trend forward, the level as the
     dashed line, the change per day in the caption) and drops `{chart.cpu}`. `memDaysUntilFull` alerts
     draw the same forecast chart, toward 100 %.
+  - **The countdown stays current:** while a `memForecastPct` alert is live, the engine rewrites its
+    message and stored context in place whenever the level or whole-day count moves (6 → 5 → 4), so
+    reminders quote today's number. Nothing is re-sent and no Event is written. An alert in an alert group
+    keeps the count it fired with.
 - **`customStateValue`** needs `dimensionFilter.stateProbeId` (an id from `/schema` →
   `stateProbes`). `stateRowPattern` matches the row's *label*, and blank means every row, one alert each.
   **`customWidgetValue`** needs `widgetId` (from `/schema` → `customWidgets`). **`path*`**
