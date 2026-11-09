@@ -110,7 +110,10 @@ diagnosing "the wrong people were told".
 
 **Use multiple severity levels** → **+ Severity**. Each band is a higher severity at its own
 threshold (up to 4 bands above the base). One alert **climbs and eases in place** rather than
-firing several. De-escalation is immediate, and the hysteresis dead band eases it to the base.
+firing several. An alert leaves a band on the same hold it entered on: it eases to a lower
+band — or, in the hysteresis dead band, to the base — only after the value has stayed out of
+the band for the hold (business rule 19(a)), so a value idling at a band's line does not
+re-run the band's notify actions each time it climbs back over. A zero hold eases at once.
 Bands share the trigger's metric, aggregation, window and dimension filter, and inherit its hold.
 
 **Use different actions for each severity level** lets each band have its own `actions`,
