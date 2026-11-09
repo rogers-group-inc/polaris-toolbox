@@ -44,14 +44,14 @@ stored, normalized body plus `id`, `createdAt`, `updatedAt`.
 
 ### What `actions` defaults to
 
-- **`actions` omitted:** the server adds the audit-Event action (`{ "type": "event" }`) for every
-  trigger except `event` and `change`. **No notify is added.** The rule raises an in-app alert
-  and writes `notification.triggered`, and nobody is emailed.
-- **`actions: []` sent explicitly** is respected: no audit Event is written. That is how an API
-  caller opts out of it.
+- **`actions` omitted or `[]`:** no action is added. The rule raises an in-app alert and writes
+  `notification.triggered`, and nobody is emailed. The audit Event is not an action (Polaris
+  rule 146): every fire, every escalation tier's first send and the end write one, and nothing
+  turns that off. A posted `{ "type": "event" }` is stripped from `actions`, band `actions` and
+  `resetActions`.
 - The **in-app alert is not an action.** Every fire creates one. That cannot be turned off,
   because acknowledge, clear, escalation and delivery all hang off it.
-- On `event` / `change` triggers the `event` action is a no-op. An automation that wrote an
+- On `event` / `change` triggers no fire Event is written. An automation that wrote an
   Event on an event trigger would feed its own trigger.
 
 ### `reset` modes

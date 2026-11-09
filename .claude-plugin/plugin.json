@@ -1,11 +1,11 @@
 {
   "name": "polaris-toolbox",
   "displayName": "Polaris toolbox",
-  "version": "1.1.21",
+  "version": "1.1.22",
   "description": "Everything for working WITH a Polaris install (monitoring and asset management): polaris-api — the client guide to /api/v1, generated from the in-app developer page (tokens, errors, assets, IPAM, quarantine, path checks, automations, the MIB Database, manufacturer profiles, events); polaris-manufacturer-profiles — builds per-vendor SNMP profiles from a vendor's MIBs (metric rows, sensor tables, overrides, widgets, state probes) as importable profile files, with tested profiles; polaris-automations — configures alert rules and explains why one did or did not fire; polaris-automation-scripts — writes pasteable scripts for automation script actions. Ships Python scripts that apply and export profiles and automations over the API.",
   "author": {
     "name": "Rogers Group — David Moore"
   },
   "license": "AGPL-3.0-only",
-  "sourceApiHtmlSha256": "00f23f2159fcbab1d178a79750169b92d90f7e1c9fd658a12254208a6ee2ab03"
+  "sourceApiHtmlSha256": "53bc28676552d50ec12caa50188141e5ce6382cc8cd58ffb2801da507ad64f5e"
 }

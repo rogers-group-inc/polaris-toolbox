@@ -28,8 +28,7 @@ It announces the recovery.
   "scope": { "condition": { "op": "and", "children": [ { "field": "assetType", "operator": "equals", "value": "<asset-type>" } ] } },
   "reset": { "mode": "auto", "sustainPolls": 3 },
   "actions": [
-    { "type": "notify", "channelId": "<email-channel-id>", "recipientDeviceRegionLevels": [1], "addresses": ["<recipient@example.com>"] },
-    { "type": "event" }
+    { "type": "notify", "channelId": "<email-channel-id>", "recipientDeviceRegionLevels": [1], "addresses": ["<recipient@example.com>"] }
   ],
   "resetActions": [
     { "type": "notify", "channelId": "<email-channel-id>", "recipientDeviceRegionLevels": [1], "addresses": ["<recipient@example.com>"] }
@@ -57,8 +56,7 @@ It announces the recovery.
   "severityBands": [ { "threshold": 98, "severity": "critical" } ],
   "actions": [
     { "type": "notify", "channelId": "<email-channel-id>", "addresses": ["<recipient@example.com>"],
-      "repeat": { "everyMin": 30, "stopOn": "acknowledge", "stopAfterHours": 12 } },
-    { "type": "event" }
+      "repeat": { "everyMin": 30, "stopOn": "acknowledge", "stopAfterHours": 12 } }
   ],
   "escalation": { "stopOn": "acknowledge", "tiers": [
     { "afterMin": 30, "actions": [ { "type": "notify", "channelId": "<email-channel-id>", "recipientDeviceRegionLevels": [2] } ] } ] },
@@ -83,7 +81,7 @@ It announces the recovery.
                "dimensionFilter": { "ifNamePattern": "<interface-name>" } },
   "scope": { "condition": { "op": "and", "children": [ { "field": "assetType", "operator": "equals", "value": "<asset-type>" } ] } },
   "reset": { "mode": "auto", "sustainPolls": 2 },
-  "actions": [ { "type": "notify", "channelId": "<email-channel-id>", "addresses": ["<recipient@example.com>"] }, { "type": "event" } ]
+  "actions": [ { "type": "notify", "channelId": "<email-channel-id>", "addresses": ["<recipient@example.com>"] } ]
 }
 ```
 
@@ -103,7 +101,7 @@ It announces the recovery.
   "scope": { "condition": { "op": "and", "children": [ { "field": "assetType", "operator": "equals", "value": "<asset-type>" } ] } },
   "reset": { "mode": "auto" },
   "groupByAsset": true,
-  "actions": [ { "type": "notify", "channelId": "<email-channel-id>", "addresses": ["<recipient@example.com>"] }, { "type": "event" } ]
+  "actions": [ { "type": "notify", "channelId": "<email-channel-id>", "addresses": ["<recipient@example.com>"] } ]
 }
 ```
 
@@ -120,7 +118,7 @@ It announces the recovery.
   "trigger": { "type": "asset_metric", "metric": "hwSensorAlarm", "operator": "==", "threshold": 1, "forPolls": 2 },
   "scope": { "allAssets": true },
   "reset": { "mode": "auto" },
-  "actions": [ { "type": "notify", "channelId": "<email-channel-id>", "addresses": ["<recipient@example.com>"] }, { "type": "event" } ]
+  "actions": [ { "type": "notify", "channelId": "<email-channel-id>", "addresses": ["<recipient@example.com>"] } ]
 }
 ```
 
@@ -139,7 +137,7 @@ It announces the recovery.
                "dimensionFilter": { "mountPathPattern": "<mount-path>" } },
   "scope": { "allAssets": true },
   "reset": { "mode": "auto" },
-  "actions": [ { "type": "notify", "channelId": "<email-channel-id>", "addresses": ["<recipient@example.com>"] }, { "type": "event" } ]
+  "actions": [ { "type": "notify", "channelId": "<email-channel-id>", "addresses": ["<recipient@example.com>"] } ]
 }
 ```
 
@@ -157,7 +155,7 @@ It announces the recovery.
                "dimensionFilter": { "stateProbeId": "<state-probe-id>" } },
   "scope": { "allAssets": true },
   "reset": { "mode": "auto" },
-  "actions": [ { "type": "notify", "channelId": "<email-channel-id>", "addresses": ["<recipient@example.com>"] }, { "type": "event" } ]
+  "actions": [ { "type": "notify", "channelId": "<email-channel-id>", "addresses": ["<recipient@example.com>"] } ]
 }
 ```
 
@@ -199,7 +197,7 @@ It announces the recovery.
       { "type": "asset_metric", "metric": "memPct", "operator": ">", "threshold": 90 } ] },
   "scope": { "condition": { "op": "and", "children": [ { "field": "assetType", "operator": "equals", "value": "<asset-type>" } ] } },
   "reset": { "mode": "auto", "sustainPolls": 2 },
-  "actions": [ { "type": "notify", "channelId": "<email-channel-id>", "addresses": ["<recipient@example.com>"] }, { "type": "event" } ]
+  "actions": [ { "type": "notify", "channelId": "<email-channel-id>", "addresses": ["<recipient@example.com>"] } ]
 }
 ```
 

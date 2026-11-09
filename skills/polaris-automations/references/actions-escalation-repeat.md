@@ -10,10 +10,10 @@ when the alert ends. Step **6 — Quiet time** decides when nobody is told.
 
 | `type` | Fields (required **bold**) | Notes |
 |---|---|---|
-| `notify` | **`channelId`**, `channelIds` (1–10), recipients…, `respectUserPreference`, `emailComposition`, `repeat`, `escalation` | sends through delivery channels |
+| `notify` | **`channelId`**, `channelIds` (1–10), recipients…, `respectUserPreference`, `emailComposition`, `repeat`, `escalation`, `id` (stable, unique among the rule's notify actions); on `resetActions` only: `matchActionId`, `customized`, `resetEscalation` | sends through delivery channels |
 | `api_call` | **`url`** (http/https, ≤ 2000, no `{tokens}`), `method` (`GET` `POST` `PUT` `PATCH` `DELETE`, default `POST`), `headers` (≤ 20; names 1–100, values ≤ 1000), `bodyTemplate` (≤ 10 000, `{tokens}`), `timeoutSec` (1–60, default 15) | loopback, link-local and metadata hosts are refused |
 | `script` | **`scriptId`**, **`runOn`** (`server` \| `agent`), `argsTemplate` (≤ 2000), `timeoutSec` (1–600) | needs `automationScripts:write`. The script must exist, be enabled and allow that `runOn`. For the script itself, see **`polaris-automation-scripts`** |
-| `event` | — | writes the `notification.triggered` audit Event. A no-op on event and change triggers |
+| `event` | — | **retired** (Polaris rule 146). Still accepted, but stripped on save and does nothing: every fire, escalation and end writes its audit Event on its own. Never write it |
 | `reboot` | `when` (`at` default \| `now`), `at` (`HH:MM` server time, default `02:00`), recipients…, `cc`, `bcc`, `minGapHours` (1–720, default 24) | needs `assets:write`. **Books** a reboot, never sends one inline (rule 115) |
 
 Where actions may go: `actions` (≤ 20), `severityBands[i].actions` (≤ 20), escalation tiers
@@ -93,10 +93,23 @@ diagnosing "the wrong people were told".
   **When a matching event arrives** (`event`). Modes and limits are in
   [rule-model.md](rule-model.md#reset-modes).
 - `resetActions` run when the alert **ends**: an auto, timed, condition or event reset, or an
-  operator clear. They are how recovery gets announced. In the wizard, adding a Notify to the trigger list
-  puts a matching one in **Reset Action**, which follows it until you edit it. Over the API you must write
-  `resetActions` yourself. Without them a recovery is silent: the alert resolves, and
-  `notification.auto_cleared` is logged.
+  operator clear. They are how recovery gets announced. Without them a recovery is silent: the alert
+  resolves, and `notification.auto_cleared` is logged.
+- **A reset `notify` can MATCH a trigger `notify`** (Polaris rule 145): give the trigger action an
+  `id` and the reset one `"matchActionId": "<that id>"`. It then sends what the trigger action sends
+  **at the moment the alert ends**, so later recipient changes reach it too; its own channel /
+  recipient fields are only a snapshot, which the server rewrites at save. `"customized": true`
+  makes it send its own fields instead. In the wizard, **+ Add Action** on **Reset Action** adds a
+  Notify that matches a trigger Notify by default (a **Resets** picker when there are several, a
+  **Customize** switch); adding a trigger Notify no longer adds a reset row.
+- **`"resetEscalation": {}`** on a reset `notify` that has a `matchActionId` also tells every
+  escalation tier that **actually sent** for the alert (at a severity the matched action runs at)
+  that it ended — through the tier's own Notify actions, once per tier. Tiers the alert never
+  reached hear nothing. `{"custom": {"<severity>:<tierIndex>": [notify, …]}}` replaces one tier's
+  recipients; the key's severity is the one whose chain it is (a band's own chain, else the base
+  severity's), the index is 0-based. Wizard: **Also reset the escalation**, with a **Customize** per tier.
+- Each tier's **first** send writes one `notification.escalated` Event on the alert
+  (`details.kind: "tier"`) and the alert shows an **ESCALATED** pill (**ESCALATED T2**…).
 - What the all-clear looks like depends on the channel. Email carries a composed recovery
   body. Web Push, Slack, Teams and Pushbullet have no composed body, so they get a
   `[RESOLVED] <host>` title with the recovery sentence ("Resolved: Port down — switch-1
