@@ -68,7 +68,7 @@ What removing this rule does to down detection: `{ isDownDetection, governs, wou
 
 _Gate: automationManagement:write_
 
-Dry-run a draft. Accepts a partial draft: `{ scope }` alone lists the devices it selects; `{ trigger, scope }` evaluates current readings. Returns `{ supported, totalEvaluated, totalAssets?, unmonitoredCount?, meetsCount, matches, carveOut?, … }` — `meetsCount` is how many readings meet the trigger now, and `carveOut` says which devices a more specific rule already owns. Event and change triggers have no current reading and answer `supported: false`. Writes nothing.
+Dry-run a draft. Accepts a partial draft: `{ scope }` alone lists the devices it selects; `{ trigger, scope }` evaluates current readings. Add `carveOutTrigger` (and the rule's `id` when editing) to a scope-only body to apply the precedence carve-out to the device list without evaluating the trigger: matches a more specific rule owns carry `excludedBy` and sort last, and `coveredAssets` counts the rest. Returns `{ supported, totalEvaluated, totalAssets?, unmonitoredCount?, meetsCount, matches, carveOut?, … }` — `meetsCount` is how many readings meet the trigger now, and `carveOut` says which devices a more specific rule already owns. Event and change triggers have no current reading and answer `supported: false`. Writes nothing.
 
 ### POST /automations/dimension-values
 

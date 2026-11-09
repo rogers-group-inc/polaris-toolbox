@@ -43,6 +43,10 @@ All paths are under `/api/v1`. `/notification-rules` still works as a deprecated
    - `unmonitoredCount` = devices in scope that can never alert (rule 37).
    - Event and change triggers have no current reading and answer `supported: false`.
    - Pass `id` when previewing an edit, so the rule's carve-out excludes itself.
+   - To get the device list **with** the carve-out applied but without evaluating anything, send
+     `{ "scope": {...}, "carveOutTrigger": {...} }` (an `asset_metric` / `asset_state` trigger; plus `id` when
+     editing). Matches a more specific rule owns carry `excludedBy` and sort last; `coveredAssets` counts the
+     rest; `carveOut` names the rules on both sides. This is what the wizard's Devices step sends.
 5. **`POST /automations`** with the full body and `"enabled": false`: **201** with `{ rule }`.
    A 400 names the failing field. Read the rule back and confirm every key survived, because unknown
    trigger and top-level keys are dropped without an error.
@@ -129,7 +133,9 @@ control of the exact body.
 ## Testing
 
 - **Test against current data** (Trigger step) and the Summary step's preview: devices, readings,
-  carve-out. This is the UI face of `POST /automations/preview`.
+  carve-out. This is the UI face of `POST /automations/preview`. The Devices step's list applies the
+  carve-out too once a metric/state trigger is set, with a "N device(s) not included" note naming the
+  more specific automation; on a new automation it says the number waits on the trigger.
 - **Test delivery** (Summary step, `automationManagement:write`): one button per distinct delivery
   (*Send Test Email*, *Send Test Web Push*, *Write a Test Event*…). Each press creates a real `[TEST]`
   alert about a **made-up device** (rule 65), sent **to the person pressing it and nobody else**.
