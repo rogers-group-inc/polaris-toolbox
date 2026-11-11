@@ -111,8 +111,19 @@ token) → `parseTemplate` with `$1` (or the bare token). Rules:
 - It is **adopted onto `Asset.model` only while the asset's model is empty** (or still a
   generic `FortiSwitch…`). An operator-typed or discovery-supplied model is never
   overwritten. Writes an `asset.model_detected` Event.
-- Use it only when the hardware model is reachable nowhere else. `sysDescr` parsing and
-  discovery already supply most models.
+- Use it only when the hardware model is reachable nowhere else. Discovery, `sysDescr`
+  parsing and (since Polaris business rule 154) the device's own ENTITY-MIB **chassis** row
+  (`entPhysicalModelName`) already supply most models. Polaris reads the chassis row on every
+  SNMP system-info pass with no profile row at all, together with the serial, the
+  manufacturer, the firmware (`entPhysicalSoftwareRev`) and the hostname (`sysName`). A device
+  that publishes `entPhysicalTable` with a chassis row needs no `model` row.
+- **A `model` row that answers wins over the chassis row.** Polaris withholds the chassis
+  model when the profile's row produced one, so a FortiSwitch keeps
+  "FortiSwitch S548DF" from `fsSysVersion`. A row that does not match leaves the chassis
+  model free to fill the field.
+- A profile `model` row can't address a table row (`entPhysicalModelName.<index>`, a
+  numeric OID): the GET is `<symbol>.0`, then the bare symbol. Don't write one to reach a
+  chassis model; rule 154 already reads it.
 
 ## Overrides: precedence and the one trap
 
