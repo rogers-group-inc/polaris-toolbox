@@ -48,6 +48,18 @@ The action enqueues the run row *and* an `AgentCommand` with `action = "run_scri
 payload `{ runId, interpreter, body, sha256, args, timeoutSec }`; a best-effort WebSocket wake
 nudges the agent to fetch immediately instead of waiting for its next poll.
 
+**The agent has 15 minutes to pick the script up** (Polaris business rule 155). An online agent
+collects it within seconds. A command still queued 15 minutes after it was requested is never
+delivered: the run is settled as `failed` with `"expired: the agent did not pick this up within
+15 minutes, so it was withdrawn and will not run"` and a warning `automation.script.run` Event
+(`reason: "expired"`). A host that was off or unreachable when the automation fired is therefore
+never handed an old script when it returns, and Polaris does not re-queue it — the automation's
+next fire, reminder or escalation tier queues a new run if its condition still holds. So do not
+write an agent script that relies on running "eventually", and do not treat `failed` on an agent
+run as proof the script ran and exited non-zero: read the run's stderr. A run the agent took but
+never reported on is settled as `timeout` once it is **timeout + 5 minutes** past its start; a
+late result still replaces that with what actually happened.
+
 The agent **verifies the sha256 of the body before executing** and refuses on mismatch. It
 writes the body to a 0700 temp file in its own temp dir, builds the same argv shape, runs it
 under a context timeout, caps each output stream at 64 KB (a chatty script keeps running —
