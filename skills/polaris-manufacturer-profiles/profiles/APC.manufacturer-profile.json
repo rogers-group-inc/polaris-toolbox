@@ -483,28 +483,6 @@
       "labelSymbol": "rPDU2OutletSwitchedStatusName",
       "httpCheck": null,
       "credential": null
-    },
-    {
-      "key": "w18",
-      "name": "Probe Temperature",
-      "symbol": "rPDU2SensorTempHumidityStatusTempC",
-      "mib": {
-        "moduleName": "PowerNet-MIB",
-        "manufacturer": "APC",
-        "model": null
-      },
-      "type": "scalar",
-      "widgetType": "gauge",
-      "transform": "tenths_to_units",
-      "displayOptions": {
-        "unit": "°C"
-      },
-      "order": 0,
-      "modelPattern": "^(AP8|APDU)",
-      "stateMap": null,
-      "labelSymbol": null,
-      "httpCheck": null,
-      "credential": null
     }
   ],
   "layout": null,
@@ -513,6 +491,6 @@
     "status": "tested",
     "testedOn": "UPS widgets: a production Polaris install (exported 2026-10-23); PDU widgets: built from PowerNet-MIB, not yet tested",
     "date": "2026-10-23",
-    "note": "One APC profile governs every APC product, so every widget is scoped by modelPattern. UPS widgets (w1-w8, PowerNet-MIB ups*) carry 'UPS|Symmetra|Galaxy' — UPS models come from this profile's upsBasicIdentModel row. Rack PDU widgets (w9-w18, PowerNet-MIB rPDU2*) carry '^(AP8|APDU)' — a 2G/3G rack PDU's model comes from its management card's sysDescr (MN:AP8870, Polaris rule 161). PDU Power uses hundredths_to_units, which needs Polaris with that transform (added 2026-11-11); an older install imports it with no transform, so it reads 100 times too high — update Polaris first. Added 2026-11-11, not yet tested on a PDU: Outlet Power's unit is unstated in the MIB (watts by common use; compare with the PDU's web page), Outlet State and Outlet Power read only on switched / metered-by-outlet models, Bank Load State only on banked models, and Probe Temperature only with a temperature probe fitted."
+    "note": "One APC profile governs every APC product, so every widget is scoped by modelPattern. UPS widgets (w1-w8, PowerNet-MIB ups*) carry 'UPS|Symmetra|Galaxy' — UPS models come from this profile's upsBasicIdentModel row. Rack PDU widgets (w9-w17, PowerNet-MIB rPDU2*) carry '^(AP8|APDU)' — a 2G/3G rack PDU's model comes from its management card's sysDescr (MN:AP8870, Polaris rule 161). PDU Power uses hundredths_to_units, which needs Polaris with that transform (added 2026-11-11); an older install imports it with no transform, so it reads 100 times too high — update Polaris first. Added 2026-11-11, not yet tested on a PDU: Outlet Power's unit is unstated in the MIB (watts by common use; compare with the PDU's web page), Outlet State and Outlet Power read only on switched / metered-by-outlet models, and Bank Load State only on banked models. Probe Temperature (rPDU2SensorTempHumidityStatusTempC) was removed 2026-11-11 after its first run: with no probe attached the PDU still answers the row with -1 (TempStatus notPresent), which a gauge cannot tell from a reading and shows as -0.1 C; add it by hand, switched on only for PDUs with a probe fitted."
   }
 }
