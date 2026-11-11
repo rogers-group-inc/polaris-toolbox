@@ -204,6 +204,27 @@ It announces the recovery.
 - One hold for the whole tree, one alert per device. No severity bands, `clearThreshold` or
   `groupByAsset` on a composite. Composites do not take part in carve-out.
 
+## 10. Fibre-channel CRC errors climbing on a SAN switch port
+
+```json
+{
+  "name": "FC CRC errors — <fc-switch>",
+  "enabled": false,
+  "severity": "warning",
+  "trigger": { "type": "asset_metric", "metric": "fcCrcErrorRate", "operator": ">", "threshold": 0,
+               "forPolls": 3,
+               "dimensionFilter": { "ifNamePattern": "fc" } },
+  "scope": { "condition": { "op": "and", "children": [ { "field": "hostname", "operator": "equals", "value": "<fc-switch>" } ] } },
+  "reset": { "mode": "auto", "sustainPolls": 5 },
+  "actions": [ { "type": "notify", "channelId": "<email-channel-id>", "addresses": ["<recipient@example.com>"] } ]
+}
+```
+
+- `ifNamePattern` matches part of a name, so `"fc"` covers every FC port. Rule 159a: the rate is per MINUTE, and only **pinned** FC ports (ifType fibreChannel) on a switch
+  whose CISCO-FC-FE-MIB is uploaded produce readings. Swap the metric for `fcInvalidTxWordRate`
+  (optic / cable), `fcLinkFailureRate`, `fcSyncLossRate` or `fcSignalLossRate`. A counter cleared
+  on the switch gives one tick with no reading, never a negative rate.
+
 ## Add-ons for any recipe
 
 - **Never at night except critical:** `"quietTime": { "ignoreGlobal": true }` keeps a rule paging

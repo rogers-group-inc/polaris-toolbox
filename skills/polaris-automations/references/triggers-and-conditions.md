@@ -42,6 +42,7 @@ Path Monitor automations are stored as `asset_metric` (a `path*` metric) or `cha
 | `storageUsedPct` / `storageUsedBytes` | % / bytes | `mountPathPattern` |
 | `storageDaysUntilFull` | days | `mountPathPattern` |
 | `ifInErrorRate` / `ifOutErrorRate` | errors/s | `ifNamePattern` |
+| `fcCrcErrorRate` / `fcLinkFailureRate` / `fcSyncLossRate` / `fcSignalLossRate` / `fcInvalidTxWordRate` | per **minute** | `ifNamePattern` (pinned fibre-channel ports only; a cleared counter gives no reading — rule 159a) |
 | `ifInBps` / `ifOutBps` | bps | `ifNamePattern` |
 | `sdwanLatencyMs` / `sdwanJitterMs` / `sdwanPacketLoss` | ms / ms / % | `healthCheck`, `link` |
 | `ipsecThroughputBps` | bps | `tunnelName` |
