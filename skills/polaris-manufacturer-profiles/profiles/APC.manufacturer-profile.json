@@ -67,7 +67,7 @@
         "warningWhen": "below"
       },
       "order": 0,
-      "modelPattern": null,
+      "modelPattern": "UPS|Symmetra|Galaxy",
       "stateMap": null,
       "labelSymbol": null,
       "httpCheck": null,
@@ -87,7 +87,7 @@
       "transform": null,
       "displayOptions": {},
       "order": 0,
-      "modelPattern": null,
+      "modelPattern": "UPS|Symmetra|Galaxy",
       "stateMap": {
         "mode": "notEquals",
         "values": [
@@ -115,7 +115,7 @@
       "transform": null,
       "displayOptions": {},
       "order": 0,
-      "modelPattern": null,
+      "modelPattern": "UPS|Symmetra|Galaxy",
       "stateMap": {
         "mode": "notEquals",
         "values": [
@@ -143,7 +143,7 @@
       "transform": null,
       "displayOptions": {},
       "order": 0,
-      "modelPattern": null,
+      "modelPattern": "UPS|Symmetra|Galaxy",
       "stateMap": {
         "mode": "equals",
         "values": [
@@ -171,7 +171,7 @@
       "transform": "ticks_to_seconds",
       "displayOptions": {},
       "order": 0,
-      "modelPattern": null,
+      "modelPattern": "UPS|Symmetra|Galaxy",
       "stateMap": null,
       "labelSymbol": null,
       "httpCheck": null,
@@ -191,7 +191,7 @@
       "transform": null,
       "displayOptions": {},
       "order": 0,
-      "modelPattern": null,
+      "modelPattern": "UPS|Symmetra|Galaxy",
       "stateMap": {
         "mode": "equals",
         "values": [
@@ -226,7 +226,7 @@
       "transform": null,
       "displayOptions": {},
       "order": 0,
-      "modelPattern": null,
+      "modelPattern": "UPS|Symmetra|Galaxy",
       "stateMap": null,
       "labelSymbol": null,
       "httpCheck": null,
@@ -249,7 +249,7 @@
         "warningAt": 90
       },
       "order": 0,
-      "modelPattern": null,
+      "modelPattern": "UPS|Symmetra|Galaxy",
       "stateMap": null,
       "labelSymbol": null,
       "httpCheck": null,
@@ -261,6 +261,7 @@
   "_toolbox": {
     "status": "tested",
     "testedOn": "a production Polaris install (exported 2026-10-23); models and firmware not yet recorded",
-    "date": "2026-10-23"
+    "date": "2026-10-23",
+    "note": "Every widget reads a UPS object (PowerNet-MIB ups*), so each carries modelPattern 'UPS|Symmetra|Galaxy' (added 2026-11-11, not yet re-tested): one APC profile governs every APC product, and without it the UPS widgets applied to rack PDUs, transfer switches and NetBotz monitors too. UPS models come from this profile's upsBasicIdentModel row."
   }
 }

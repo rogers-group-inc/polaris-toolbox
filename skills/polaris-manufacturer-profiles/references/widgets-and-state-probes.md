@@ -12,7 +12,8 @@ All of these must hold, or the widget is silently skipped:
 - **The profile governs the device**: keyed by the device's manufacturer, or reached through
   the profile's `matchPattern` when no profile has the device's own name (rule 131).
 - `modelPattern`, if set, matches `Asset.model` (RE2, case-insensitive). An empty model
-  fails a set pattern.
+  fails a set pattern. See "One profile, several product lines" below — it is the ONLY way
+  to keep a widget off a manufacturer's other products.
 - **The widget is switched ON for that device.** A new widget starts OFF everywhere. It is
   switched on per device from the "enable on these devices" list Polaris opens when it is
   saved, its **Devices…** button, the switch on each card of the asset's Custom MIB tab, or
@@ -25,6 +26,28 @@ All of these must hold, or the widget is silently skipped:
   polling-method gate any more: a UPS with no CPU stream still polls its battery widgets.
 - **HTTP widgets**: none of the SNMP conditions. They dial the asset's address, or its DNS
   name / hostname.
+
+## One profile, several product lines
+
+A manufacturer has ONE profile, and it governs every device with that manufacturer: APC's
+covers its UPSes, rack PDUs, transfer switches and NetBotz monitors alike. A widget with no
+`modelPattern` therefore applies to all of them, and a UPS battery widget shows up — and
+polls nothing — on a PDU. Splitting the vendor into two profiles does not work: the profile
+is chosen by the asset's manufacturer, and both products say "APC".
+
+Give every widget that reads one product line's objects a `modelPattern` naming that line:
+
+- **Write a positive pattern.** Patterns run on RE2: no lookahead, so "anything but `AP8`"
+  (`^(?!AP8)`) cannot be written and is refused on save. Name what the widget IS for.
+- **Know where the model comes from.** The pattern matches `Asset.model`, and a device with
+  no model fails every set pattern — so a widget scoped this way needs its devices to have
+  one. Check what model the target devices actually show before choosing the pattern.
+- **APC, as shipped in this toolbox:** UPS models come from the profile's own
+  `upsBasicIdentModel` row ("Smart-UPS 1500", "Symmetra LX 16000 RM"), so the UPS widgets
+  carry `UPS|Symmetra|Galaxy`. Rack PDUs, rack ATSes and NetBotz Rack Monitor 200 units get
+  their model from the management card's sysDescr (`MN:AP8870`, Polaris rule 161), so a PDU
+  widget would carry `^AP8` and a NetBotz one `^NBRK`. A UPS's management card never supplies
+  the UPS's model — that card is a removable add-on.
 
 ## widgetType
 

@@ -19,7 +19,7 @@ and `apply-profile.py` removes it first.
 
 | Manufacturer | Status | Covers | MIBs to upload (under the same manufacturer) |
 |---|---|---|---|
-| [APC](APC.manufacturer-profile.json) | tested | UPS model (`upsBasicIdentModel`, on device type `power`); eight widgets: battery capacity, run time remaining, battery temperature and output load gauges; output status, battery status, replace indicator and last transfer cause states | PowerNet-MIB |
+| [APC](APC.manufacturer-profile.json) | tested | UPS model (`upsBasicIdentModel`, on device type `power`); eight widgets: battery capacity, run time remaining, battery temperature and output load gauges; output status, battery status, replace indicator and last transfer cause states — each scoped to UPS models (`modelPattern` `UPS\|Symmetra\|Galaxy`, added 2026-11-11, not re-tested) so they stay off APC PDUs, ATSes and NetBotz units | PowerNet-MIB |
 | [Cisco](Cisco.manufacturer-profile.json) | tested | CPU (`cpmCPUTotal5secRev`, averaged), memory pools (`ciscoMemoryPoolUsed` + `Free`, summed); also applies to `cisco\|ios-?xe\|nx-?os`. The same rows Polaris seeds | none — Polaris ships CISCO-SMI, CISCO-PROCESS-MIB and CISCO-MEMORY-POOL-MIB on a fresh install (an upgraded install uploads them) |
 | [Fortinet](Fortinet.manufacturer-profile.json) | tested | FortiGate CPU / memory, and the hardware-sensor table on models matching `201G` only; FortiSwitch CPU / memory / flash / model identity; FortiAP CPU / memory / temperature / wireless stations — each family as a device-type default AND a model-pattern row | FORTINET-CORE-MIB (the others import it), FORTINET-FORTIGATE-MIB, FORTINET-FORTISWITCH-MIB, FORTINET-FORTIAP-MIB |
 
