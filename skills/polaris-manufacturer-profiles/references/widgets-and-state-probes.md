@@ -45,9 +45,10 @@ Give every widget that reads one product line's objects a `modelPattern` naming 
 - **APC, as shipped in this toolbox:** UPS models come from the profile's own
   `upsBasicIdentModel` row ("Smart-UPS 1500", "Symmetra LX 16000 RM"), so the UPS widgets
   carry `UPS|Symmetra|Galaxy`. Rack PDUs, rack ATSes and NetBotz Rack Monitor 200 units get
-  their model from the management card's sysDescr (`MN:AP8870`, Polaris rule 161), so a PDU
-  widget would carry `^AP8` and a NetBotz one `^NBRK`. A UPS's management card never supplies
-  the UPS's model — that card is a removable add-on.
+  their model from the management card's sysDescr (`MN:AP8870`, Polaris rule 161), so the
+  shipped rack-PDU widgets (`rPDU2*`) carry `^(AP8|APDU)`, and a NetBotz one would carry
+  `^NBRK`. A UPS's management card never supplies the UPS's model — that card is a removable
+  add-on.
 
 ## widgetType
 

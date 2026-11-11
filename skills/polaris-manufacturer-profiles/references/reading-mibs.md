@@ -66,7 +66,7 @@ DESCRIPTION together:
 |---|---|
 | "percent", `UNITS "%"`, range `(0..100)` | usable directly as CPU / memory percent |
 | `DISPLAY-HINT "d-1"` (e.g. MikroTik `Temperature`), or "tenths of degrees" | scalar temperature row with `transform: tenths_to_units`; on a widget, the same transform |
-| `DISPLAY-HINT "d-2"` or hundredths | no transform for it on a metric row. A widget can't scale by 100 either (`percent_to_ratio` divides by 100 but labels the result a ratio); say so |
+| `DISPLAY-HINT "d-2"` or hundredths | no transform for it on a metric row. On a widget, `hundredths_to_units` (Polaris from 2026-11-11 — an older install imports it as no transform, so the widget reads 100× high; say so). A `table` widget applies no transform at all: prefer a column already in whole units |
 | "kilobytes", `UNITS "KB"` | memory percent is still right (both halves agree), but the chart's byte figures are 1/1024. Note it. Storage needs bytes, so a KB pair is wrong there. Prefer another object, or leave storage to HRM. |
 | bytes as `Counter64` / `Gauge32` / `CounterBasedGauge64` | fine. Note a 32-bit gauge caps at 4 GiB. |
 | `TimeTicks` | widget with `ticks_to_seconds` |

@@ -46,11 +46,12 @@ Fields (on the metric row they carry a `default` prefix; on an override row they
 ### Transforms
 
 Unary (`TransformKind`): `bytes_to_mb`, `bytes_to_gb`, `mb_to_bytes`, `ticks_to_seconds`,
-`ratio_to_percent`, `percent_to_ratio`, `signed_to_unsigned`, `tenths_to_units`.
+`ratio_to_percent`, `percent_to_ratio`, `signed_to_unsigned`, `tenths_to_units`,
+`hundredths_to_units` (Polaris from 2026-11-11).
 
 - On a **metric or override row**, only `METRIC_ROW_TRANSFORMS` is accepted. Today that is
   exactly **`tenths_to_units` on a `scalar` `temperature` row**. Everything else is a 400.
-- On a **widget**, the whole unary list is accepted and applied.
+- On a **widget**, the whole unary list is accepted, and applied to `gauge` / `line` / `value` readings. A `table` widget stores each row raw, transform or not.
 - There is no Celsius↔Fahrenheit transform, on purpose. Polaris stores °C and converts at
   render.
 

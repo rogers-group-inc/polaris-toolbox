@@ -254,14 +254,265 @@
       "labelSymbol": null,
       "httpCheck": null,
       "credential": null
+    },
+    {
+      "key": "w9",
+      "name": "PDU Power",
+      "symbol": "rPDU2DeviceStatusPower",
+      "mib": {
+        "moduleName": "PowerNet-MIB",
+        "manufacturer": "APC",
+        "model": null
+      },
+      "type": "scalar",
+      "widgetType": "line",
+      "transform": "hundredths_to_units",
+      "displayOptions": {
+        "unit": "kW"
+      },
+      "order": 0,
+      "modelPattern": "^(AP8|APDU)",
+      "stateMap": null,
+      "labelSymbol": null,
+      "httpCheck": null,
+      "credential": null
+    },
+    {
+      "key": "w10",
+      "name": "Phase 1 Current",
+      "symbol": "rPDU2PhaseStatusCurrent",
+      "mib": {
+        "moduleName": "PowerNet-MIB",
+        "manufacturer": "APC",
+        "model": null
+      },
+      "type": "scalar",
+      "widgetType": "gauge",
+      "transform": "tenths_to_units",
+      "displayOptions": {
+        "unit": "A"
+      },
+      "order": 0,
+      "modelPattern": "^(AP8|APDU)",
+      "stateMap": null,
+      "labelSymbol": null,
+      "httpCheck": null,
+      "credential": null
+    },
+    {
+      "key": "w11",
+      "name": "Input Voltage",
+      "symbol": "rPDU2PhaseStatusVoltage",
+      "mib": {
+        "moduleName": "PowerNet-MIB",
+        "manufacturer": "APC",
+        "model": null
+      },
+      "type": "scalar",
+      "widgetType": "value",
+      "transform": null,
+      "displayOptions": {
+        "unit": "V"
+      },
+      "order": 0,
+      "modelPattern": "^(AP8|APDU)",
+      "stateMap": null,
+      "labelSymbol": null,
+      "httpCheck": null,
+      "credential": null
+    },
+    {
+      "key": "w12",
+      "name": "PDU Load State",
+      "symbol": "rPDU2DeviceStatusLoadState",
+      "mib": {
+        "moduleName": "PowerNet-MIB",
+        "manufacturer": "APC",
+        "model": null
+      },
+      "type": "scalar",
+      "widgetType": "state",
+      "transform": null,
+      "displayOptions": {},
+      "order": 0,
+      "modelPattern": "^(AP8|APDU)",
+      "stateMap": {
+        "mode": "equals",
+        "values": [
+          "3",
+          "4"
+        ],
+        "trueLabel": "Near overload",
+        "falseLabel": "Normal",
+        "trueIsProblem": true
+      },
+      "labelSymbol": null,
+      "httpCheck": null,
+      "credential": null
+    },
+    {
+      "key": "w13",
+      "name": "Phase Load State",
+      "symbol": "rPDU2PhaseStatusLoadState",
+      "mib": {
+        "moduleName": "PowerNet-MIB",
+        "manufacturer": "APC",
+        "model": null
+      },
+      "type": "table",
+      "widgetType": "state",
+      "transform": null,
+      "displayOptions": {},
+      "order": 0,
+      "modelPattern": "^(AP8|APDU)",
+      "stateMap": {
+        "mode": "equals",
+        "values": [
+          "3",
+          "4"
+        ],
+        "trueLabel": "Near overload",
+        "falseLabel": "Normal",
+        "trueIsProblem": true
+      },
+      "labelSymbol": "rPDU2PhaseStatusNumber",
+      "httpCheck": null,
+      "credential": null
+    },
+    {
+      "key": "w14",
+      "name": "Bank Load State",
+      "symbol": "rPDU2BankStatusLoadState",
+      "mib": {
+        "moduleName": "PowerNet-MIB",
+        "manufacturer": "APC",
+        "model": null
+      },
+      "type": "table",
+      "widgetType": "state",
+      "transform": null,
+      "displayOptions": {},
+      "order": 0,
+      "modelPattern": "^(AP8|APDU)",
+      "stateMap": {
+        "mode": "equals",
+        "values": [
+          "3",
+          "4"
+        ],
+        "trueLabel": "Near overload",
+        "falseLabel": "Normal",
+        "trueIsProblem": true
+      },
+      "labelSymbol": "rPDU2BankStatusNumber",
+      "httpCheck": null,
+      "credential": null
+    },
+    {
+      "key": "w15",
+      "name": "PDU Power Supply",
+      "symbol": "rPDU2DeviceStatusPowerSupplyAlarm",
+      "mib": {
+        "moduleName": "PowerNet-MIB",
+        "manufacturer": "APC",
+        "model": null
+      },
+      "type": "scalar",
+      "widgetType": "state",
+      "transform": null,
+      "displayOptions": {},
+      "order": 0,
+      "modelPattern": "^(AP8|APDU)",
+      "stateMap": {
+        "mode": "equals",
+        "values": [
+          "2"
+        ],
+        "trueLabel": "Alarm",
+        "falseLabel": "OK",
+        "trueIsProblem": true
+      },
+      "labelSymbol": null,
+      "httpCheck": null,
+      "credential": null
+    },
+    {
+      "key": "w16",
+      "name": "Outlet Power",
+      "symbol": "rPDU2OutletMeteredStatusPower",
+      "mib": {
+        "moduleName": "PowerNet-MIB",
+        "manufacturer": "APC",
+        "model": null
+      },
+      "type": "table",
+      "widgetType": "table",
+      "transform": null,
+      "displayOptions": {},
+      "order": 0,
+      "modelPattern": "^(AP8|APDU)",
+      "stateMap": null,
+      "labelSymbol": null,
+      "httpCheck": null,
+      "credential": null
+    },
+    {
+      "key": "w17",
+      "name": "Outlet State",
+      "symbol": "rPDU2OutletSwitchedStatusState",
+      "mib": {
+        "moduleName": "PowerNet-MIB",
+        "manufacturer": "APC",
+        "model": null
+      },
+      "type": "table",
+      "widgetType": "state",
+      "transform": null,
+      "displayOptions": {},
+      "order": 0,
+      "modelPattern": "^(AP8|APDU)",
+      "stateMap": {
+        "mode": "equals",
+        "values": [
+          "1"
+        ],
+        "trueLabel": "Off",
+        "falseLabel": "On",
+        "trueIsProblem": true
+      },
+      "labelSymbol": "rPDU2OutletSwitchedStatusName",
+      "httpCheck": null,
+      "credential": null
+    },
+    {
+      "key": "w18",
+      "name": "Probe Temperature",
+      "symbol": "rPDU2SensorTempHumidityStatusTempC",
+      "mib": {
+        "moduleName": "PowerNet-MIB",
+        "manufacturer": "APC",
+        "model": null
+      },
+      "type": "scalar",
+      "widgetType": "gauge",
+      "transform": "tenths_to_units",
+      "displayOptions": {
+        "unit": "°C"
+      },
+      "order": 0,
+      "modelPattern": "^(AP8|APDU)",
+      "stateMap": null,
+      "labelSymbol": null,
+      "httpCheck": null,
+      "credential": null
     }
   ],
   "layout": null,
   "exportedAt": "2026-10-24T02:06:43.005Z",
   "_toolbox": {
     "status": "tested",
-    "testedOn": "a production Polaris install (exported 2026-10-23); models and firmware not yet recorded",
+    "testedOn": "UPS widgets: a production Polaris install (exported 2026-10-23); PDU widgets: built from PowerNet-MIB, not yet tested",
     "date": "2026-10-23",
-    "note": "Every widget reads a UPS object (PowerNet-MIB ups*), so each carries modelPattern 'UPS|Symmetra|Galaxy' (added 2026-11-11, not yet re-tested): one APC profile governs every APC product, and without it the UPS widgets applied to rack PDUs, transfer switches and NetBotz monitors too. UPS models come from this profile's upsBasicIdentModel row."
+    "note": "One APC profile governs every APC product, so every widget is scoped by modelPattern. UPS widgets (w1-w8, PowerNet-MIB ups*) carry 'UPS|Symmetra|Galaxy' — UPS models come from this profile's upsBasicIdentModel row. Rack PDU widgets (w9-w18, PowerNet-MIB rPDU2*) carry '^(AP8|APDU)' — a 2G/3G rack PDU's model comes from its management card's sysDescr (MN:AP8870, Polaris rule 161). PDU Power uses hundredths_to_units, which needs Polaris with that transform (added 2026-11-11); an older install imports it with no transform, so it reads 100 times too high — update Polaris first. Added 2026-11-11, not yet tested on a PDU: Outlet Power's unit is unstated in the MIB (watts by common use; compare with the PDU's web page), Outlet State and Outlet Power read only on switched / metered-by-outlet models, Bank Load State only on banked models, and Probe Temperature only with a temperature probe fitted."
   }
 }
