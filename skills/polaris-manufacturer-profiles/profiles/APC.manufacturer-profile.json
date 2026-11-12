@@ -301,8 +301,30 @@
     },
     {
       "key": "w11",
-      "name": "Input Voltage",
-      "symbol": "rPDU2PhaseStatusVoltage",
+      "name": "L1 Voltage",
+      "symbol": "rPDU2PhaseStatusVoltage.1",
+      "mib": {
+        "moduleName": "PowerNet-MIB",
+        "manufacturer": "APC",
+        "model": null
+      },
+      "type": "scalar",
+      "widgetType": "value",
+      "transform": null,
+      "displayOptions": {
+        "unit": "V"
+      },
+      "order": 0,
+      "modelPattern": "^(AP8|APDU)",
+      "stateMap": null,
+      "labelSymbol": null,
+      "httpCheck": null,
+      "credential": null
+    },
+    {
+      "key": "w28",
+      "name": "L2 Voltage",
+      "symbol": "rPDU2PhaseStatusVoltage.2",
       "mib": {
         "moduleName": "PowerNet-MIB",
         "manufacturer": "APC",
