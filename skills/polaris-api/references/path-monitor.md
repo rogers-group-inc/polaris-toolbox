@@ -70,7 +70,7 @@ _Gate: pathChecks:write_
 
 _Gate: pathChecks:write_
 
-`204`. Removes the check and its host list.
+`204`. Removes the check and its host list. `409` while an automation's condition is narrowed to this check; the message names the automations.
 
 ### POST /path-checks/preview-sources
 

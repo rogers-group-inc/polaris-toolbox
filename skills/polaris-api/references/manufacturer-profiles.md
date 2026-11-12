@@ -60,7 +60,7 @@ Add a scoped row under a metric: the same fields without the `default` prefix (`
 
 _Gate: manufacturerProfiles:write_
 
-Add a custom widget: `name`, `widgetType` (`gauge | line | table | state | http`), `symbol` and `mibId` (an **uploaded** module; both omitted on `http`), `type` (`scalar | table`), `transform?`, `displayOptions?` (`min`, `max`, `unit`, `warningAt`, `warningWhen: "below"`), `modelPattern?`. A `state` widget (a state probe, alertable per row through the `customStateValue` metric) needs `stateMap: { mode, values?, trueLabel?, falseLabel?, trueIsProblem? }` (`nonzero | zero | equals | notEquals | gte | lte`) and takes `labelSymbol?`, the sibling column naming each row. An `http` widget takes `httpCheck: { useHttps?, port?, path?, expectStatus?, expectBody?, matchMode?, verifyTls?, … }` and `credentialId?` (an `http` credential). A new widget polls no device until it is switched on for it (below). PUT and DELETE `…/widgets/:widgetId` edit and remove one; an edit keeps the widget's id, so automations on a state probe keep working.
+Add a custom widget: `name`, `widgetType` (`gauge | line | table | state | http`), `symbol` and `mibId` (an **uploaded** module; both omitted on `http`), `type` (`scalar | table`), `transform?`, `displayOptions?` (`min`, `max`, `unit`, `warningAt`, `warningWhen: "below"`), `modelPattern?`. A `state` widget (a state probe, alertable per row through the `customStateValue` metric) needs `stateMap: { mode, values?, trueLabel?, falseLabel?, trueIsProblem? }` (`nonzero | zero | equals | notEquals | gte | lte`) and takes `labelSymbol?`, the sibling column naming each row. An `http` widget takes `httpCheck: { useHttps?, port?, path?, expectStatus?, expectBody?, matchMode?, verifyTls?, … }` and `credentialId?` (an `http` credential). A new widget polls no device until it is switched on for it (below). PUT and DELETE `…/widgets/:widgetId` edit and remove one; an edit keeps the widget's id, so automations on a state probe keep working. Removing one answers `409` while an automation's condition names it.
 
 ### PUT /server-settings/manufacturer-profiles/:id/widgets/:widgetId/assets
 
@@ -84,7 +84,7 @@ _Gate: manufacturerProfiles:write_
 
 _Gate: manufacturerProfiles:write_
 
-`204`. Its devices fall back to the standard MIBs for every metric.
+`204`. Its devices fall back to the standard MIBs for every metric. `409` while an automation's condition names one of its widgets or state probes.
 
 ### GET /manufacturer-aliases
 
