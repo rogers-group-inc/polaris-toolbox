@@ -279,8 +279,8 @@
     },
     {
       "key": "w10",
-      "name": "Phase 1 Current",
-      "symbol": "rPDU2PhaseStatusCurrent",
+      "name": "L1 Current",
+      "symbol": "rPDU2PhaseStatusCurrent.1",
       "mib": {
         "moduleName": "PowerNet-MIB",
         "manufacturer": "APC",
@@ -450,7 +450,7 @@
       "transform": null,
       "displayOptions": {},
       "order": 0,
-      "modelPattern": "^(AP8|APDU)",
+      "modelPattern": "^(AP89|APDU)",
       "stateMap": null,
       "labelSymbol": null,
       "httpCheck": null,
@@ -470,7 +470,7 @@
       "transform": null,
       "displayOptions": {},
       "order": 0,
-      "modelPattern": "^(AP8|APDU)",
+      "modelPattern": "^(AP86|AP89|APDU)",
       "stateMap": {
         "mode": "equals",
         "values": [
@@ -483,14 +483,210 @@
       "labelSymbol": "rPDU2OutletSwitchedStatusName",
       "httpCheck": null,
       "credential": null
+    },
+    {
+      "key": "w19",
+      "name": "L2 Current",
+      "symbol": "rPDU2PhaseStatusCurrent.2",
+      "mib": {
+        "moduleName": "PowerNet-MIB",
+        "manufacturer": "APC",
+        "model": null
+      },
+      "type": "scalar",
+      "widgetType": "gauge",
+      "transform": "tenths_to_units",
+      "displayOptions": {
+        "unit": "A"
+      },
+      "order": 0,
+      "modelPattern": "^(AP8|APDU)",
+      "stateMap": null,
+      "labelSymbol": null,
+      "httpCheck": null,
+      "credential": null
+    },
+    {
+      "key": "w20",
+      "name": "L1 Power",
+      "symbol": "rPDU2PhaseStatusPower.1",
+      "mib": {
+        "moduleName": "PowerNet-MIB",
+        "manufacturer": "APC",
+        "model": null
+      },
+      "type": "scalar",
+      "widgetType": "line",
+      "transform": "hundredths_to_units",
+      "displayOptions": {
+        "unit": "kW"
+      },
+      "order": 0,
+      "modelPattern": "^(AP8|APDU)",
+      "stateMap": null,
+      "labelSymbol": null,
+      "httpCheck": null,
+      "credential": null
+    },
+    {
+      "key": "w21",
+      "name": "L2 Power",
+      "symbol": "rPDU2PhaseStatusPower.2",
+      "mib": {
+        "moduleName": "PowerNet-MIB",
+        "manufacturer": "APC",
+        "model": null
+      },
+      "type": "scalar",
+      "widgetType": "line",
+      "transform": "hundredths_to_units",
+      "displayOptions": {
+        "unit": "kW"
+      },
+      "order": 0,
+      "modelPattern": "^(AP8|APDU)",
+      "stateMap": null,
+      "labelSymbol": null,
+      "httpCheck": null,
+      "credential": null
+    },
+    {
+      "key": "w22",
+      "name": "Apparent Power",
+      "symbol": "rPDU2DeviceStatusApparentPower",
+      "mib": {
+        "moduleName": "PowerNet-MIB",
+        "manufacturer": "APC",
+        "model": null
+      },
+      "type": "scalar",
+      "widgetType": "value",
+      "transform": "hundredths_to_units",
+      "displayOptions": {
+        "unit": "kVA"
+      },
+      "order": 0,
+      "modelPattern": "^(AP8|APDU)",
+      "stateMap": null,
+      "labelSymbol": null,
+      "httpCheck": null,
+      "credential": null
+    },
+    {
+      "key": "w23",
+      "name": "Power Factor",
+      "symbol": "rPDU2DeviceStatusPowerFactor",
+      "mib": {
+        "moduleName": "PowerNet-MIB",
+        "manufacturer": "APC",
+        "model": null
+      },
+      "type": "scalar",
+      "widgetType": "value",
+      "transform": "hundredths_to_units",
+      "displayOptions": {},
+      "order": 0,
+      "modelPattern": "^(AP8|APDU)",
+      "stateMap": null,
+      "labelSymbol": null,
+      "httpCheck": null,
+      "credential": null
+    },
+    {
+      "key": "w24",
+      "name": "Energy",
+      "symbol": "rPDU2DeviceStatusEnergy",
+      "mib": {
+        "moduleName": "PowerNet-MIB",
+        "manufacturer": "APC",
+        "model": null
+      },
+      "type": "scalar",
+      "widgetType": "value",
+      "transform": "tenths_to_units",
+      "displayOptions": {
+        "unit": "kWh"
+      },
+      "order": 0,
+      "modelPattern": "^(AP8|APDU)",
+      "stateMap": null,
+      "labelSymbol": null,
+      "httpCheck": null,
+      "credential": null
+    },
+    {
+      "key": "w25",
+      "name": "Bank 1 Current",
+      "symbol": "rPDU2BankStatusCurrent.1",
+      "mib": {
+        "moduleName": "PowerNet-MIB",
+        "manufacturer": "APC",
+        "model": null
+      },
+      "type": "scalar",
+      "widgetType": "gauge",
+      "transform": "tenths_to_units",
+      "displayOptions": {
+        "unit": "A"
+      },
+      "order": 0,
+      "modelPattern": "^(AP8|APDU)",
+      "stateMap": null,
+      "labelSymbol": null,
+      "httpCheck": null,
+      "credential": null
+    },
+    {
+      "key": "w26",
+      "name": "Bank 2 Current",
+      "symbol": "rPDU2BankStatusCurrent.2",
+      "mib": {
+        "moduleName": "PowerNet-MIB",
+        "manufacturer": "APC",
+        "model": null
+      },
+      "type": "scalar",
+      "widgetType": "gauge",
+      "transform": "tenths_to_units",
+      "displayOptions": {
+        "unit": "A"
+      },
+      "order": 0,
+      "modelPattern": "^(AP8|APDU)",
+      "stateMap": null,
+      "labelSymbol": null,
+      "httpCheck": null,
+      "credential": null
+    },
+    {
+      "key": "w27",
+      "name": "Bank 3 Current",
+      "symbol": "rPDU2BankStatusCurrent.3",
+      "mib": {
+        "moduleName": "PowerNet-MIB",
+        "manufacturer": "APC",
+        "model": null
+      },
+      "type": "scalar",
+      "widgetType": "gauge",
+      "transform": "tenths_to_units",
+      "displayOptions": {
+        "unit": "A"
+      },
+      "order": 0,
+      "modelPattern": "^(AP8|APDU)",
+      "stateMap": null,
+      "labelSymbol": null,
+      "httpCheck": null,
+      "credential": null
     }
   ],
   "layout": null,
   "exportedAt": "2026-10-24T02:06:43.005Z",
   "_toolbox": {
     "status": "tested",
-    "testedOn": "UPS widgets: a production Polaris install (exported 2026-10-23); PDU widgets: built from PowerNet-MIB, not yet tested",
+    "testedOn": "UPS widgets: a production Polaris install (exported 2026-10-23); PDU widgets: an AP8870 on a production install 2026-11-11 (per-phase / per-bank / energy widgets added after that run, built from PowerNet-MIB and the PDU's web page)",
     "date": "2026-10-23",
-    "note": "One APC profile governs every APC product, so every widget is scoped by modelPattern. UPS widgets (w1-w8, PowerNet-MIB ups*) carry 'UPS|Symmetra|Galaxy' — UPS models come from this profile's upsBasicIdentModel row. Rack PDU widgets (w9-w17, PowerNet-MIB rPDU2*) carry '^(AP8|APDU)' — a 2G/3G rack PDU's model comes from its management card's sysDescr (MN:AP8870, Polaris rule 161). PDU Power uses hundredths_to_units, which needs Polaris with that transform (added 2026-11-11); an older install imports it with no transform, so it reads 100 times too high — update Polaris first. Added 2026-11-11, not yet tested on a PDU: Outlet Power's unit is unstated in the MIB (watts by common use; compare with the PDU's web page), Outlet State and Outlet Power read only on switched / metered-by-outlet models, and Bank Load State only on banked models. Probe Temperature (rPDU2SensorTempHumidityStatusTempC) was removed 2026-11-11 after its first run: with no probe attached the PDU still answers the row with -1 (TempStatus notPresent), which a gauge cannot tell from a reading and shows as -0.1 C; add it by hand, switched on only for PDUs with a probe fitted."
+    "note": "One APC profile governs every APC product, so every widget is scoped by modelPattern. UPS widgets (w1-w8, PowerNet-MIB ups*) carry 'UPS|Symmetra|Galaxy' — UPS models come from this profile's upsBasicIdentModel row. Rack PDU widgets (rPDU2*) carry '^(AP8|APDU)' — a 2G/3G rack PDU's model comes from its management card's sysDescr (MN:AP8870, Polaris rule 161). Per-phase and per-bank widgets name ONE table row with a row suffix (rPDU2PhaseStatusPower.2 = L2, rPDU2BankStatusCurrent.3 = bank 3), which needs Polaris from 2026-11-11; an older install does not resolve the suffixed symbol and the widget stays empty. kW / kVA / power factor use hundredths_to_units (also 2026-11-11). Run on an AP8870 (2-phase 208 V, 3 banks) 2026-11-11: power, L1 current, voltage, load / power-supply states read correctly; that model has 0 metered and 0 switched outlets, so Outlet Power is scoped to '^(AP89|APDU)' and Outlet State to '^(AP86|AP89|APDU)' (family letters from APC's numbering, not tested). A single-phase PDU has no L2 row and a non-banked one no bank rows — switch those widgets off there. Probe Temperature (rPDU2SensorTempHumidityStatusTempC) is not shipped: with no probe attached the PDU answers -1 (TempStatus notPresent), which a gauge cannot tell from a reading; add it by hand, switched on only for PDUs with a probe fitted."
   }
 }

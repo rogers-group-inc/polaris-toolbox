@@ -50,6 +50,10 @@ Give every widget that reads one product line's objects a `modelPattern` naming 
   `^NBRK`. A UPS's management card never supplies the UPS's model — that card is a removable
   add-on.
 
+## One row of a table
+
+A `gauge` / `line` / `value` widget on a table column reads the column's **first** readable row. To read another, append the row index to the symbol: `rPDU2PhaseStatusPower.2` (phase L2 of an APC PDU), `rPDU2BankStatusCurrent.3` (bank 3), `.1.3` for a two-part index. Polaris resolves the column and appends the index, and GETs exactly that instance (Polaris from 2026-11-11; an older install leaves the widget empty). The profile editor accepts it when the column is in the chosen MIB. Find the indexes with the asset's **Device Query → SNMP Walk** on the column. One widget per row: a device without that row (a single-phase PDU asked for L2) gets no reading — switch the widget off there.
+
 ## widgetType
 
 | widgetType | `type` | What is stored / shown |
