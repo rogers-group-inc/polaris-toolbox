@@ -109,7 +109,7 @@ Add, remove or replace tags on many devices at once: `{ ids: [uuid, …], mode: 
 
 _Gate: assets:write_
 
-`204`. `409` for a quarantined device — release it first.
+`204`. `409` for a quarantined device — release it first — and for one whose `quarantineStranded` list is not empty: retry or dismiss those FortiGates first.
 
 ### PUT /assets/:id/primary-address
 

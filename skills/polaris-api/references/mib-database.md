@@ -49,4 +49,4 @@ The bundled standard modules by key (`std:system`, `std:interfaces`, `std:host-r
 
 _Gate: mibDatabase:write_
 
-`204`. Profile rows that resolved through it read unresolved until it is uploaded again.
+`204`. Profile rows that resolved through it read unresolved until it is uploaded again. `409` while an asset or a class monitoring setting has it selected for a stream — the message names them; choose another MIB there first. The same holds for the other registries a configuration names by id: deleting a delivery channel or an automation script that an automation, alert group or pending booking still uses, or a credential a Discovery still tries, answers `409` with what uses it.

@@ -43,13 +43,19 @@ Re-reads each FortiGate to confirm the quarantine entries are still in place. Re
 
 _Gate: assetsQuarantine:read_
 
-`{ id, status, statusBeforeQuarantine, quarantineReason, quarantinedAt, quarantinedBy, quarantineTargets }`.
+`{ id, status, statusBeforeQuarantine, quarantineReason, quarantinedAt, quarantinedBy, quarantineTargets, quarantineStranded }`. `quarantineStranded` lists the FortiGates that still hold the block after a release (see below); it is `[]` otherwise and is independent of `status`.
 
 ### DELETE /assets/:id/quarantine
 
 _Gate: assetsQuarantine:write_
 
-Release. Restores the device's prior status and monitoring; device-side unpush failures are reported (`{ assetId, newStatus, unpushedFrom, failedToUnpush, message }`) but never block the release. `409` when the device is not quarantined.
+Release. Restores the device's prior status and monitoring; device-side unpush failures are reported (`{ assetId, newStatus, unpushedFrom, failedToUnpush, message }`) but never block the release. `409` when the device is not quarantined. A FortiGate that could not be reached is remembered on the asset as `quarantineStranded` and retried in the background (15 minutes after the failure, backing off to every 6 hours) until it clears or is dismissed.
+
+### POST /assets/:id/quarantine/stranded/retry
+
+_Gate: assetsQuarantine:write_
+
+Retry now on the FortiGates that still hold the block after a release. Body `{ "fortigateDevice": "..." }` for one gate, `{}` for all. Response `{ assetId, cleared, remaining }` — `cleared` is the gate names it was removed from, `remaining` the entries still listed (`{ fortigateDevice, integrationId, error, since, lastAttemptAt, attempts }`). `404` when the named gate is not listed. DELETE `/assets/:id/quarantine/stranded` (optionally `?device=`) stops tracking an entry **without** touching the device — for a gate that is gone for good, or once the entry has been removed there by hand.
 
 ### POST /assets/bulk-quarantine
 
@@ -63,4 +69,4 @@ _Gate: assetsQuarantine:read · PUT at write_
 
 The sighting max-age window (`{ sightingMaxAgeDays }`, default 180) — how recent a FortiGate sighting must be to count as a push target. PUT accepts `{ "sightingMaxAgeDays": 0–3650 }`.
 
-Related refusals elsewhere: `PUT /assets/:id` refuses setting or clearing `status: "quarantined"` directly (use these endpoints), and `DELETE /assets/:id` answers `409` for a quarantined device — release first.
+Related refusals elsewhere: `PUT /assets/:id` refuses setting or clearing `status: "quarantined"` directly (use these endpoints), and `DELETE /assets/:id` answers `409` for a quarantined device — release first — and for a released one still listed in `quarantineStranded`. Merging an asset into another moves its quarantine and its stranded FortiGates to the survivor.

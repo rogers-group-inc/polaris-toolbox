@@ -101,7 +101,13 @@ Retired networks, newest first: `{ archivedSubnets, total, limit, offset }`. Fil
 
 _Gate: subnets:read_
 
-One retirement with every reservation it held, ordered by address. Archived entries are read-only — they exist for review, and no write path can reach them.
+One retirement with every reservation it held, ordered by address. Archived entries exist for review: nothing edits one, and nothing removes one except the delete below.
+
+### DELETE /subnets/archived/:id
+
+_Gate: subnets:fullwrite_
+
+Delete one archive entry and the reservations archived with it: `{ cidr, reservationCount }`. Recorded in Events as `subnet.archive_deleted`. `409` while a pending chassis-replacement conflict still compares against it — accept or reject that conflict first. Archive entries never expire on their own.
 
 ### GET /subnets/exclusions
 
