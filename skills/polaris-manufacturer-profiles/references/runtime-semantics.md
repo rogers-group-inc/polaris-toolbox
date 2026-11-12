@@ -10,7 +10,8 @@ This file decides what *collects*.
 
 1. The profile whose `manufacturer` equals the asset's alias-normalized manufacturer.
 2. Only if none: the first profile, alphabetically by manufacturer, whose `matchPattern`
-   matches `"<manufacturer> <os> <pinned MIB module>"`.
+   matches `"<manufacturer> <os>"`. Nothing else chooses the profile: the per-stream MIB
+   pins that once did are retired (Polaris business rule 170) — set the asset's Manufacturer.
 3. Otherwise none, and every stream uses the standard MIBs.
 
 The same answer is used everywhere: the metric rows, the custom widgets, the Custom MIB tab

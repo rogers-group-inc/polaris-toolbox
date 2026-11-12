@@ -38,7 +38,7 @@ operator to), never from memory. For complete real files, see
 (gauge and state widgets).
 
 - **`metrics`** lists only the rows the profile sets; a row left out keeps "no opinion" on
-  import. `metricKey` is `model`, `cpu`, `memory`, `temperature`, `interfaces`, `storage`,
+  import. `metricKey` is `model`, `serial`, `cpu`, `memory`, `temperature`, `interfaces`, `storage`,
   `lldp` or `wirelessStations`. Every field of a metric row is present (null when unused) —
   [profile-model.md](profile-model.md) has each one's rules.
 - **`overrides`** under a metric carry the same fields plus `assetType`, `modelPattern`

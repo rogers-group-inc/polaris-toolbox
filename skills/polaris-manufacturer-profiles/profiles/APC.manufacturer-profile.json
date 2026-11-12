@@ -46,6 +46,42 @@
           "order": 0
         }
       ]
+    },
+    {
+      "metricKey": "serial",
+      "symbol": null,
+      "symbolB": null,
+      "mib": null,
+      "mibStdKey": null,
+      "type": "scalar",
+      "transform": null,
+      "aggregate": "none",
+      "label": null,
+      "parsePattern": null,
+      "parseTemplate": null,
+      "sensorColumns": null,
+      "overrides": [
+        {
+          "assetType": "power",
+          "modelPattern": null,
+          "symbol": "upsAdvIdentSerialNumber",
+          "symbolB": null,
+          "mib": {
+            "moduleName": "PowerNet-MIB",
+            "manufacturer": "APC",
+            "model": null
+          },
+          "mibStdKey": null,
+          "type": "scalar",
+          "transform": null,
+          "aggregate": "none",
+          "label": null,
+          "parsePattern": null,
+          "parseTemplate": null,
+          "sensorColumns": null,
+          "order": 0
+        }
+      ]
     }
   ],
   "widgets": [

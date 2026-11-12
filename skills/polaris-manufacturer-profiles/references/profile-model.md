@@ -9,16 +9,17 @@ Source of truth in the Polaris repo: `prisma/schema.prisma` (models `Manufacture
 | Field | Meaning |
 |---|---|
 | `manufacturer` | Unique. Stored through the alias normalizer, so creating "Hewlett Packard Enterprise" may store "HPE" if an alias maps it. A second profile for the same name is `409`. |
-| `matchPattern` | **"Also applies when"**: an RE2 regex, case-insensitive, tested against `"<asset manufacturer> <asset os> <pinned MIB module name>"`, and **only** when no profile is keyed by the asset's manufacturer. Use it for spellings no alias folds in, OS-only identity ("Cisco IOS" with an empty manufacturer), or a device that reports nothing but speaks a recognizable MIB. ≤ 512 chars. Null clears it. |
+| `matchPattern` | **"Also applies when"**: an RE2 regex, case-insensitive, tested against `"<asset manufacturer> <asset os>"`, and **only** when no profile is keyed by the asset's manufacturer. Use it for spellings no alias folds in, or OS-only identity ("Cisco IOS" with an empty manufacturer). (Polaris builds before rule 170, 2026-11-12, also appended a per-stream pinned MIB's module name; the pins are retired.) ≤ 512 chars. Null clears it. |
 
 Creating a profile pre-creates **all eight metric rows**, empty. You never create a metric
 row, you only `PUT` it.
 
-## Metric rows: eight fixed keys, five are read
+## Metric rows: nine fixed keys, six are read
 
 | `metricKey` | UI label | Read at probe time? |
 |---|---|---|
 | `model` | Model identity | **yes** |
+| `serial` | Serial number | **yes** (Polaris rule 171; read with the model, also on the probe's 10-minute identity read) |
 | `cpu` | CPU | **yes** |
 | `memory` | Memory | **yes** |
 | `temperature` | Hardware Sensors | **yes** |
@@ -75,8 +76,8 @@ Scope is the pair `(assetType, modelPattern)`, and **at least one half must be s
   `firewall`, `workstation`, `printer`, `access_point`, `other`, `hypervisor`,
   `kubernetes_cluster`, `container`, plus any custom type the install added under Device
   Types. Unknown → 400.
-- `modelPattern` is RE2, case-insensitive, matched against `Asset.model` plus the pinned MIB
-  module name (plus "FortiSwitch"/"FortiAP" class hints on Fortinet). ≤ 512.
+- `modelPattern` is RE2, case-insensitive, matched against `Asset.model` (plus
+  "FortiSwitch"/"FortiAP" class hints on Fortinet). ≤ 512.
 - `order` (int, default 0) breaks ties inside a precedence tier, ascending.
 
 ## Custom widgets

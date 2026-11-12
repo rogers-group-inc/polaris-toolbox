@@ -2,13 +2,13 @@
 
 _Generated from Polaris `public/api.html` (section `manufacturer-profiles`). Do not edit by hand — re-run `scripts/import-api-html.mjs`._
 
-A **manufacturer profile** says which MIB symbol carries each SNMP telemetry metric for one vendor: model identity, CPU, memory, hardware sensors and storage (the `interfaces`, `lldp` and `wirelessStations` rows are descriptive and change nothing), with device-type defaults and per-model exceptions under each, plus **custom widgets** and **state probes**. A profile governs the devices whose manufacturer is its name (after aliases), and — only when no profile carries a device's own name — those its `matchPattern` ("also applies when") matches. Its symbols resolve from MIBs uploaded under its name. Endpoints gate on `manufacturerProfiles`; patterns are RE2 (no look-around or back-references), case-insensitive, ≤ 512 characters. Every write writes an Event, and the row-level writes return `warnings: []` naming any symbol that does not resolve — a warning, never a refusal.
+A **manufacturer profile** says which MIB symbol carries each SNMP telemetry metric for one vendor: model identity, serial number, CPU, memory, hardware sensors and storage (the `interfaces`, `lldp` and `wirelessStations` rows are descriptive and change nothing), with device-type defaults and per-model exceptions under each, plus **custom widgets** and **state probes**. A profile governs the devices whose manufacturer is its name (after aliases), and — only when no profile carries a device's own name — those its `matchPattern` ("also applies when") matches. Its symbols resolve from MIBs uploaded under its name. Endpoints gate on `manufacturerProfiles`; patterns are RE2 (no look-around or back-references), case-insensitive, ≤ 512 characters. Every write writes an Event, and the row-level writes return `warnings: []` naming any symbol that does not resolve — a warning, never a refusal.
 
 ### GET /server-settings/manufacturer-profiles
 
 _Gate: manufacturerProfiles:read_
 
-`{ profiles, transforms, combiners, metricTransforms }`. Each profile summary carries `id, manufacturer, metricCount, overrideCount, widgetCount` and its readiness: `ready` (every symbol resolves), `partial`, `unresolvedCount`, `unresolvedSymbols`. `GET …/suggestions` lists the manufacturer names already in use (with device counts) and not yet profiled — create profiles under one of these, or the profile matches no device.
+`{ profiles, transforms, combiners, metricTransforms }`. Each profile summary carries `id, manufacturer, metricCount, overrideCount, widgetCount` and its readiness: `ready` (every symbol resolves), `partial`, `unresolvedCount`, `unresolvedSymbols`. `GET …/suggestions` lists the manufacturer names already in use (with device counts) and not yet profiled — create profiles under one of these, or the profile matches no device. `GET …/unprofiled` narrows that to devices that answer SNMP: `{ manufacturers: [{ manufacturer, assetCount, coveredBy }] }`, where `coveredBy` (`{ id, manufacturer }` or null) names a profile whose "Also applies when" pattern already matches the name — creating a profile for it would take those devices from that profile. Polaris never creates a profile on its own.
 
 ```bash
 curl -H "Authorization: Bearer $POLARIS_TOKEN" \
@@ -31,7 +31,7 @@ _Gate: manufacturerProfiles:write_
 
 _Gate: manufacturerProfiles:write_
 
-Set a metric row (`metricKey`: `model | cpu | memory | temperature | interfaces | storage | lldp | wirelessStations`; `temperature` is the Hardware Sensors row). Fields, all optional on a partial update:
+Set a metric row (`metricKey`: `model | serial | cpu | memory | temperature | interfaces | storage | lldp | wirelessStations`; `temperature` is the Hardware Sensors row). Fields, all optional on a partial update:
 
 - `defaultSymbol`, `defaultSymbolB`, `defaultType` — `scalar` (a GET of `.0`), `double_scalar` (two symbols, `defaultSymbolB` required) or `table`.
 - `defaultTransform` — on `double_scalar` a combiner naming what the pair is (`a_over_b_as_percent` = used / total, `a_over_a_plus_b_as_percent` = used / free, …); on a scalar `temperature` row only `tenths_to_units`; none on a table.
