@@ -90,7 +90,7 @@ Scope is the pair `(assetType, modelPattern)`, and **at least one half must be s
 | `mibId` | **required** for every type but `http`, and it must be an *uploaded* `MibFile`. A widget on a standard-MIB symbol needs that module uploaded too, usually as a generic MIB. |
 | `type` | `scalar` \| `table` (no `double_scalar` on widgets) |
 | `transform` | any unary transform, or null |
-| `displayOptions` | gauge: `min`, `max`, `unit`, `format`, `warningAt`, `warningWhen` (`"below"`, or absent = above). line and value: `unit`, `format`, `warningAt`, `warningWhen`. table: none. `format` is `""`, `duration_s` or `duration_ticks`. These paint the card only; alerting is an automation's job. |
+| `displayOptions` | gauge: `min`, `max`, `unit`, `format`, `warningAt`, `criticalAt`, `warningWhen` (`"below"`, or absent = above — the side for BOTH levels). line and value: `unit`, `format`, `warningAt`, `criticalAt`, `warningWhen`. table: none. `format` is `""`, `duration_s` or `duration_ticks`. `criticalAt` must lie beyond `warningAt` on the problem side (a 400 otherwise). The levels colour the card (amber / red) and are what a `customWidgetLevel` automation alerts on — business rule 181. |
 | `modelPattern` | optional RE2 gate against `Asset.model` |
 | `stateMap`, `labelSymbol` | `state` only; `stateMap` required there. Forced null on other types. |
 | `httpCheck`, `credentialId` | `http` only. Forced null on other types. |

@@ -47,6 +47,7 @@ Path Monitor automations are stored as `asset_metric` (a `path*` metric) or `cha
 | `sdwanLatencyMs` / `sdwanJitterMs` / `sdwanPacketLoss` | ms / ms / % | `healthCheck`, `link` |
 | `ipsecThroughputBps` | bps | `tunnelName` |
 | `customWidgetValue` | the widget's | `widgetId` |
+| `customWidgetLevel` | 0 normal / 1 warning / 2 critical | `widgetId` (optional) |
 | `customStateValue` | 0/1 | `stateProbeId`, `stateRowPattern` |
 | `pathOk` / `pathLatencyMs` / `pathFailurePct` / `pathHttpStatus` / `pathHopCount` / `pathTlsDaysLeft` | 0/1 / ms / % / — / hops / days | `checkId` |
 
@@ -94,7 +95,13 @@ Path Monitor automations are stored as `asset_metric` (a `path*` metric) or `cha
     forecast alert ends at the reboot. Hosts that report no uptime (ICMP / SSH / WinRM only) keep the 30-day fit.
 - **`customStateValue`** needs `dimensionFilter.stateProbeId` (an id from `/schema` →
   `stateProbes`). `stateRowPattern` matches the row's *label*, and blank means every row, one alert each.
-  **`customWidgetValue`** needs `widgetId` (from `/schema` → `customWidgets`). **`path*`**
+  **`customWidgetValue`** needs `widgetId` (from `/schema` → `customWidgets`).
+  **`customWidgetLevel`** (business rule 181) reads each widget against the `warningAt` /
+  `criticalAt` levels on its manufacturer profile: `>= 1` with a severity band at 2 →
+  critical, and NO `widgetId` covers every widget that sets levels, each at its own — the one
+  automation per device class that replaces a threshold automation per widget. A widget
+  without levels is never read. The alert reads "<widget> is in critical state", and its
+  email leads with `{chart.widget}`. **`path*`**
   take `checkId` (from `/schema` → `pathChecks`). Blank means every check, one alert each.
 
 ### Packet loss (`probeLossPct`)

@@ -58,9 +58,9 @@ A `gauge` / `line` / `value` widget on a table column reads the column's **first
 
 | widgetType | `type` | What is stored / shown |
 |---|---|---|
-| `gauge` | `scalar` | walk the symbol, take the first numeric value, apply `transform` → one number. A dial, with `displayOptions` `min`, `max`, `unit`, `format`, `warningAt`, `warningWhen`. |
-| `line` | `scalar` | same reading, charted over time. `unit`, `format`, `warningAt`, `warningWhen`. |
-| `value` | `scalar` | the same reading shown as the latest number alone. `unit`, `format`, `warningAt`, `warningWhen`. |
+| `gauge` | `scalar` | walk the symbol, take the first numeric value, apply `transform` → one number. A dial, with `displayOptions` `min`, `max`, `unit`, `format`, `warningAt`, `criticalAt`, `warningWhen`. |
+| `line` | `scalar` | same reading, charted over time. `unit`, `format`, `warningAt`, `criticalAt`, `warningWhen`. |
+| `value` | `scalar` | the same reading shown as the latest number alone. `unit`, `format`, `warningAt`, `criticalAt`, `warningWhen`. |
 | `table` | `table` | walk the subtree → `[{index, value}]` per row (numeric where possible). No display options. Point it at one **column**. |
 | `state` | `scalar` or `table` | each reading mapped through `stateMap` to 0/1 and stored as a state sample, which **is alertable per row** in Automations ("…is Alarm"). |
 | `http` | n/a | an HTTP(S) request and its verdict. No symbol, no MIB. |
@@ -68,8 +68,12 @@ A `gauge` / `line` / `value` widget on a table column reads the column's **first
 `format` is `""` (a number with its unit, the default), `duration_s` (the value is seconds,
 shown as "1 h 23 m") or `duration_ticks` (SNMP TimeTicks, hundredths of a second). A `unit`
 of `°C` or `°F` marks a temperature: it is shown in the install's temperature unit,
-converted when they differ. `warningAt` / `warningWhen` only colour the card; alerting on a
-value is an automation. A profile's card layout on the Custom MIB tab (`layout` in the
+converted when they differ. `warningAt` / `criticalAt` are the widget's own LEVELS (business
+rule 181): the card turns amber at warning and red at critical, and ONE automation on the
+`customWidgetLevel` metric (no widget picked) alerts on every widget that sets them, each at
+its own levels — so put the per-model thresholds here, on the profile, rather than in one
+automation per widget. `warningWhen: "below"` flips both to the low side (battery, runtime);
+`criticalAt` must lie beyond `warningAt` on that side. A profile's card layout on the Custom MIB tab (`layout` in the
 export) is optional.
 
 A widget's `mibId` must name an **uploaded** MIB, even when the symbol comes from a bundled
