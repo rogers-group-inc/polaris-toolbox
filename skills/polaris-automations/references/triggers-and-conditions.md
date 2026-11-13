@@ -21,7 +21,7 @@ The lists below are what the server accepted when this was written.
 `median` `min` `max`. **Severities:** `notice` `informational` `warning` `serious` `critical`.
 
 Path Monitor automations are stored as `asset_metric` (a `path*` metric) or `change`
-(`path_check_path_changed`). The wizard files them under their own category.
+(`path_check_path_changed`, `path_check_tls_cert_changed`). The wizard files them under their own category.
 
 ## Asset metrics (`asset_metric.metric`)
 
@@ -186,7 +186,7 @@ terms joined by `|` match any of them (rule 124), e.g. `"wan1 | ATT EPLS"`.
 `lldp_neighbor_added`, `lldp_neighbor_removed`, `process_started`, `process_stopped`,
 `sdwan_failover`, `mclag_peer_lost`, `wireless_station_connected`, `firmware_changed`,
 `switch_port_changed`, `wireless_ap_changed`, `gateway_firewall_changed`, `fortilink_changed`,
-`path_check_path_changed`. A change fires on each instant. To alert *while* a link is down, use the
+`path_check_path_changed`, `path_check_tls_cert_changed`. A change fires on each instant. To alert *while* a link is down, use the
 `asset_state` field instead: it has a reading, so it gets a hold and an auto reset.
 
 ## Host metrics (`host_metric.metric`)
@@ -269,3 +269,13 @@ Path metrics watch only devices with an active Polaris Agent: the scope is ANDed
 "Polaris Agent installed". `includeServer: true` also watches the Polaris server's own runs
 of a check. It cannot be combined with a `condition` reset. The alert is about the **host that
 ran the check**, and path results never change that host's Up / Down status.
+
+**Certificates (Polaris rule 85(c)).** `pathTlsDaysLeft` is the lead-time alert (days until the
+certificate an HTTPS check sees expires). `path_check_tls_cert_changed` fires when that
+certificate's expiry differs from the one the same source saw last. It writes the Event
+`path_check.tls_cert_changed`, whose details carry `direction` (`later` = renewed, level info;
+`earlier` = replaced by one that expires sooner, level warning), `shiftDays`, `previousNotAfter`,
+`notAfter`, `previousIssuer`, `issuer`. The first certificate a source sees is a baseline. A run
+that could not connect is ignored. There is at most one Event per host and check every 10
+minutes. The change type fires in both directions: for renewals only, use an `event` trigger on
+`path_check.tls_cert_changed` with `detailsMatch: { "direction": "later" }`.

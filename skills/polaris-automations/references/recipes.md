@@ -225,6 +225,74 @@ It announces the recovery.
   (optic / cable), `fcLinkFailureRate`, `fcSyncLossRate` or `fcSignalLossRate`. A counter cleared
   on the switch gives one tick with no reading, never a negative rate.
 
+## 11. TLS certificate renewed (renewals only)
+
+Tells you when a site's certificate was renewed, meaning the certificate a path check sees now
+expires later than the last one it saw. Needs Polaris rule 85(c).
+
+```json
+{
+  "name": "TLS certificate renewed",
+  "enabled": false,
+  "severity": "informational",
+  "trigger": { "type": "event", "actionPattern": "path_check.tls_cert_changed",
+               "detailsMatch": { "direction": "later" } },
+  "scope": { "allAssets": true },
+  "reset": { "mode": "timed", "afterSec": 86400 },
+  "actions": [ { "type": "notify", "channelId": "<email-channel-id>", "addresses": ["<recipient@example.com>"] } ]
+}
+```
+
+- **Why an `event` trigger:** `detailsMatch` filters on the Event's own `direction`. The
+  Path Monitor change trigger (recipe 12) fires on renewals *and* on replacements.
+- **The scope stays unconstrained.** The Polaris server's own runs write an Event naming the
+  check, not a device, so a device filter would drop them (rule 46).
+- **One notice per renewal per host.** Every agent host that runs the check sees the new
+  certificate and writes its own Event. To hear once per site, run the check from the Polaris server
+  only, or narrow the scope to one host.
+- The timed reset clears the notice after a day. The alert is news, not a state that recovers.
+- The email names the host and the check and gives both expiry dates (`{message}`).
+
+## 12. TLS certificate changed (renewed or replaced) — Path Monitor
+
+```json
+{
+  "name": "TLS certificate changed",
+  "enabled": false,
+  "severity": "warning",
+  "trigger": { "type": "change", "changeType": "path_check_tls_cert_changed", "includeServer": true },
+  "scope": { "allAssets": true },
+  "reset": { "mode": "timed", "afterSec": 86400 },
+  "actions": [ { "type": "notify", "channelId": "<email-channel-id>", "addresses": ["<recipient@example.com>"] } ]
+}
+```
+
+- This is the wizard's **Path Monitor → A check's TLS certificate changes (renewed or replaced)**.
+  The pool is the scope ANDed with "Polaris Agent installed". `includeServer` adds the server's runs.
+- The message says "renewed — expiry moved N days later" or "replaced — expiry moved N days
+  EARLIER". To page only on the second case, use recipe 11 with `"direction": "earlier"`.
+
+## 13. TLS certificate expires within 30 days, critical within 7
+
+```json
+{
+  "name": "TLS certificate expiring",
+  "enabled": false,
+  "severity": "warning",
+  "trigger": { "type": "asset_metric", "metric": "pathTlsDaysLeft", "operator": "<", "threshold": 30,
+               "aggregation": "latest", "includeServer": true },
+  "scope": { "allAssets": true },
+  "reset": { "mode": "auto" },
+  "severityBands": [ { "threshold": 7, "severity": "critical" } ],
+  "actions": [ { "type": "notify", "channelId": "<email-channel-id>", "addresses": ["<recipient@example.com>"],
+                 "repeat": { "everyMin": 1440, "stopOn": "acknowledge" } } ]
+}
+```
+
+- One alert per check (the `checkId` dimension). It clears on its own when the renewed certificate
+  is seen, so pair it with recipe 11 to hear that it was renewed.
+- HTTPS checks only. A check that cannot connect has no reading, so `pathOk` stays the outage alert.
+
 ## Add-ons for any recipe
 
 - **Never at night except critical:** `"quietTime": { "ignoreGlobal": true }` keeps a rule paging
