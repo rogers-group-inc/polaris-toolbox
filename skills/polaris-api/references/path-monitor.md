@@ -10,7 +10,7 @@ A check can also run from **the Polaris server itself** (`runOnServer: true`), a
 
 _Gate: pathChecks:read_
 
-`{ checks: [...] }`, by name. Each check carries its definition (below) plus a fleet summary: `sourceCount` (hosts running it), `okCount` / `failCount` (hosts whose latest run passed / failed — a host with no result yet is in neither), `unexpectedCount` (of the failing, those whose run still got an HTTP answer, just not the expected status or body) and `lastRunAt`. `maintenance: { inMaintenance, windows[] }` says whether it is paused by a maintenance schedule (see maintenance.md) right now; each window carries `scheduleId, scheduleName, startedAt` and the current occurrence's end as `until` (the server's wall clock, `"YYYY-MM-DDTHH:MM"`) and `untilUtc`.
+`{ checks: [...] }`, by name. Each check carries its definition (below) plus a fleet summary: `sourceCount` (hosts running it), `okCount` / `failCount` (hosts whose latest run passed / failed — a host with no result yet is in neither), `unexpectedCount` (of the failing, those whose run still got an HTTP answer, just not the expected status or body), `staleCount` (sources whose latest result is stale — the agent host is offline, or no run has landed for three intervals plus two minutes; they are in none of the other three counts) and `lastRunAt`. `maintenance: { inMaintenance, windows[] }` says whether it is paused by a maintenance schedule (see maintenance.md) right now; each window carries `scheduleId, scheduleName, startedAt` and the current occurrence's end as `until` (the server's wall clock, `"YYYY-MM-DDTHH:MM"`) and `untilUtc`.
 
 ```bash
 curl -H "Authorization: Bearer $POLARIS_TOKEN" \
@@ -27,7 +27,7 @@ One check, same shape as a list row. `404` when it does not exist.
 
 _Gate: pathChecks:read_
 
-`{ results: [...] }` — every host running the check with its latest result, by hostname, after the Polaris server's own row when it runs there (`server: true`, `assetId: null`, `hostname: "Polaris server"`; every host row has `server: false`): `assetId, hostname, ipAddress, os, explicit` (pinned rather than matched), `lastOk, lastSampleAt, lastLatencyMs, lastHttpStatus, lastError, lastResolvedIp, lastFailAt, lastHopCount, lastTracerouteComplete, lastTracerouteAt`, and the agent's `agentVersion, online, supported` (`false` below 0.21.0 — the host is a member but cannot run it).
+`{ results: [...] }` — every host running the check with its latest result, by hostname, after the Polaris server's own row when it runs there (`server: true`, `assetId: null`, `hostname: "Polaris server"`; every host row has `server: false`): `assetId, hostname, ipAddress, os, explicit` (pinned rather than matched), `lastOk, lastSampleAt, lastLatencyMs, lastHttpStatus, lastError, lastResolvedIp, lastFailAt, lastHopCount, lastTracerouteComplete, lastTracerouteAt`, the agent's `agentVersion, online, supported` (`false` below 0.21.0 — the host is a member but cannot run it), and `staleReason`: `null` while the latest result is current (or there is none yet), `"offline"` when the agent host is offline, `"late"` when no run has landed for three intervals plus two minutes. A stale `lastOk` is the last verdict, not a current one. The `latest` object of `GET /assets/:id/path-checks` and `GET /path-checks/:id/server` carries the same field.
 
 ### POST /path-checks
 
