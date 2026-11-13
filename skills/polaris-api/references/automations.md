@@ -12,7 +12,7 @@ An `asset_state` trigger on `monitorStatus == down` is not only an alert: its `m
 
 _Gate: automationManagement:read_
 
-`{ rules: [...] }`. Each rule is the stored, normalized (v2) body below plus its `id`, `createdAt`, `updatedAt`. An `api_call` action's custom header values are secrets and come back **masked** (`"••••••••"`).
+`{ rules: [...] }`. Each rule is the stored, normalized (v2) body below plus its `id`, `createdAt`, `updatedAt`. An `api_call` action's custom header values are secrets and come back **masked** (`"••••••••"`). Each rule also carries `brokenReferences`: `[{ kind, message }]`, one per thing it names that no longer exists (`kind` is `channel`, `script`, `pathCheck`, `widget` or `stateProbe`); empty when nothing is broken. Computed, never stored — leave it out of a `PUT`.
 
 ```bash
 curl -H "Authorization: Bearer $POLARIS_TOKEN" \
