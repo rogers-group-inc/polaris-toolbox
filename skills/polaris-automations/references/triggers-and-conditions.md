@@ -129,7 +129,7 @@ Path Monitor automations are stored as `asset_metric` (a `path*` metric) or `cha
 | `status` | `active` `maintenance` `decommissioned` `storage` `disabled` `quarantined` | lifecycle |
 | `consecutiveFailures` | number | "Missed polls outstanding". It is a leaky bucket, not a run (rule 30) |
 | `dependencySuppressed`, `quarantined` | `true` / `false` | |
-| `fortilinkStatus` | `up` `down` `unknown` | the parent FortiGate's view of the FortiLink / CAPWAP link (rule 59). "Stopped seeing it at all" is `!= up` |
+| `fortilinkStatus` | `up` `down` `unknown` | the parent FortiGate's view of the FortiLink / CAPWAP link (rule 59). "Stopped seeing it at all" is `!= up`. Read on the device's **interface** interval and only while interface polling is on (rule 59a), so a `forPolls` hold counts interface polls: 3 ≈ 30 min at the default |
 | `firmwareVsPrimary` | `current` `older` `newer` | against the Repository's primary image (rule 87). The usual rule is `!= current` |
 | `telemetryFailingMinutes` / `systemInfoFailingMinutes` | minutes | how long that stream's polls have failed (rule 118). The usual rule is `>= 60`. A stream that is never polled gives no reading |
 | `tag` | a tag name | `==` / `!=` only. The value is the bare tag name; a region keeps its `region:` prefix |
