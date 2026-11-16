@@ -10,7 +10,7 @@ Read this before choosing an interpreter or a *Runs on* value.
 | Identity | the polaris service account | **root / LocalSystem** |
 | Platform | the Polaris host — Linux (RHEL 9 or the container image) | whatever the asset runs |
 | Reaches | the Polaris host's network position | the asset itself, locally |
-| Context env | `POLARIS_ALERT_ID`, `POLARIS_RULE`, `POLARIS_ASSET` | **`POLARIS_RUN_ID` only** |
+| Context env | `POLARIS_ALERT_ID`, `POLARIS_RULE`, `POLARIS_ASSET`, `POLARIS_RUN_ID` — plus `POLARIS_RUN_TOKEN` + `POLARIS_API_URL` when the action lets the script send email (Polaris rule 190) | **`POLARIS_RUN_ID` only** |
 | Requires | nothing | an installed Polaris Agent ≥ **0.13.0** on the triggering asset, and an alert that *has* an asset |
 | Test-runnable from the Scripts tab | yes | no — trigger it through an automation on a real asset |
 
@@ -121,6 +121,31 @@ are inherited, so ordinary scripts work — but the Polaris server's own databas
 key and tokens are deliberately **not** reachable. Do not write a script that expects them.
 
 The agent hands the child its own full environment plus `POLARIS_RUN_ID`.
+
+## Sending email through Polaris (server runs, Polaris rule 190)
+
+When the automation's script action has **Let this script send email through Polaris**
+ticked (`email: { channelId, addresses }` on the action, server runs only), each run gets:
+
+| Variable | Holds |
+|---|---|
+| `POLARIS_RUN_TOKEN` | a one-time pass for THIS run (`prun_…`), valid only while the run is running and only from the Polaris host; erased when the run ends |
+| `POLARIS_API_URL` | the Polaris API on loopback, e.g. `http://127.0.0.1:3000/api/v1` |
+
+Send with `POST $POLARIS_API_URL/script-runs/self/email`, header
+`Authorization: Bearer $POLARIS_RUN_TOKEN`, JSON body
+`{ "subject": "…", "text": "…", "files": [{ "filename", "contentType", "contentBase64" }] }`.
+
+- **The script never names recipients.** They are the action's; a body with a `to` is a 400.
+- ≤ 3 sends per run (429 after), ≤ 5 files, ≤ 512 KB decoded in total, executable types
+  (`.exe`, `.ps1`, `.js`, `.sh`, …) refused (400). Subject ≤ 200 characters, text ≤ 32 KB.
+- 401 = no pass, a wrong one, or the run ended; 403 = not called from the Polaris host;
+  409 = the channel was deleted or disabled; 502 = the channel's transport failed (the body
+  says why). Every message gets a footer naming the script and run; every attempt is an Event.
+- **Guard for its absence:** a test run without email, or an action without the box ticked,
+  has no `POLARIS_RUN_TOKEN` — print what you would have sent and exit 0.
+- A Scripts-tab **Test run** can be given a pass; its only recipient is the person running the test.
+- Never print the pass, and never pass it on argv.
 
 ## Audit
 

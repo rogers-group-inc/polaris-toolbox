@@ -523,3 +523,230 @@ try {
 Because there is no alert id on the agent, a repeat or escalation **will** restart the service
 again. If that is unacceptable, key a marker file under `$env:ProgramData\Polaris` to
 `rule + asset` and bucket it by time.
+
+---
+
+## 8. Email a site's TLS certificate when it is renewed (server, python3, Polaris rule 190)
+
+Pairs with the Path Monitor renewal automation (`polaris-automations` recipe 11): when an
+HTTPS check sees a new certificate, fetch it from the site and email it as a `.pem` through the
+action's own Polaris email channel. No SMTP settings, no password on the host.
+
+**Registry**: Name `polaris-cert-renewed-mail` · Interpreter **python3** · Runs on **the Polaris server** · Timeout **30**
+
+**On the automation's Script action**: tick **Let this script send email through Polaris**,
+pick the email channel, and list the addresses under **Send to**.
+
+**Args template** (the first line is typed per automation — the check's site)
+```
+target=intranet.example.com
+rule={rule}
+source={event.resource}
+time={time.local}
+summary={event.message}
+```
+
+**Test run** (Scripts tab): arguments `target=intranet.example.com` and `dry_run=1`, then
+again without `dry_run=1` choosing "Allow email to me via …" — the test emails only you.
+
+```python
+#!/usr/bin/env python3
+"""polaris-cert-renewed-mail - fetch a site's TLS certificate and email it as a .pem
+through the automation's own Polaris email channel (Polaris business rule 190).
+
+Polaris automation script. Runs on: the Polaris server.
+Args arrive as ONE positional parameter (sys.argv[1]), newline-delimited key=value:
+
+    target=<host>[:<port>]     the site the path check watches (port defaults to 443)
+    sni=<name>                 optional: server name to ask for, when target is an IP
+    dry_run=1                  optional: fetch and print, send nothing
+    rule=..., source=..., time=..., summary=...   optional context, shown in the email
+
+Email goes through POLARIS_API_URL with the run's one-time pass POLARIS_RUN_TOKEN,
+which Polaris provides only when the script action has "Let this script send email
+through Polaris" ticked. The recipients are the action's - this script cannot choose
+them, and needs no mail settings or password of its own.
+
+Safe to run twice: the certificate's SHA-256 fingerprint is remembered per target, and
+a certificate already mailed is not mailed again (one email per renewal, even when
+several agent hosts report the same renewal).
+"""
+import base64
+import hashlib
+import json
+import os
+import socket
+import ssl
+import sys
+import tempfile
+import urllib.error
+import urllib.request
+
+SEEN_DIR = "/var/tmp/polaris-cert-mail"   # last fingerprint mailed, per target
+NET_TIMEOUT = 10
+
+
+def log(msg):
+    print(msg, flush=True)
+
+
+def parse_args(raw):
+    out = {}
+    for line in (raw or "").splitlines():
+        if "=" in line:
+            k, v = line.split("=", 1)
+            out[k.strip()] = v.strip()
+    return out
+
+
+def split_target(target):
+    host, port = target, 443
+    if target.startswith("["):                      # [ipv6]:port
+        host, _, rest = target[1:].partition("]")
+        if rest.startswith(":") and rest[1:].isdigit():
+            port = int(rest[1:])
+    elif target.count(":") == 1:
+        h, p = target.split(":")
+        if p.isdigit():
+            host, port = h, int(p)
+    return host, port
+
+
+def fetch_cert(host, port, sni):
+    """Return (der_bytes, parsed_dict_or_None, verified_bool)."""
+    ctx = ssl.create_default_context()
+    try:
+        with socket.create_connection((host, port), timeout=NET_TIMEOUT) as sock:
+            with ctx.wrap_socket(sock, server_hostname=sni) as tls:
+                return tls.getpeercert(binary_form=True), tls.getpeercert(), True
+    except ssl.SSLCertVerificationError as e:
+        log("certificate does not verify (%s); fetching it anyway" % e.verify_message)
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+    with socket.create_connection((host, port), timeout=NET_TIMEOUT) as sock:
+        with ctx.wrap_socket(sock, server_hostname=sni) as tls:
+            return tls.getpeercert(binary_form=True), None, False
+
+
+def decode_untrusted(pem):
+    """Subject / issuer / dates of a certificate this host does not trust (getpeercert()
+    is empty then). Stdlib only; None if the decoder is unavailable."""
+    path = None
+    try:
+        with tempfile.NamedTemporaryFile("w", suffix=".pem", delete=False) as f:
+            f.write(pem)
+            path = f.name
+        return ssl._ssl._test_decode_cert(path)  # noqa: SLF001
+    except Exception:  # noqa: BLE001 - details are a nicety; the .pem is still mailed
+        return None
+    finally:
+        if path:
+            os.unlink(path)
+
+
+def name_of(rdns):
+    return ", ".join("%s=%s" % (k, v) for rdn in rdns or () for k, v in rdn)
+
+
+def send_via_polaris(subject, text, filename, pem):
+    req = urllib.request.Request(
+        os.environ["POLARIS_API_URL"].rstrip("/") + "/script-runs/self/email",
+        data=json.dumps({
+            "subject": subject,
+            "text": text,
+            "files": [{"filename": filename, "contentType": "application/x-pem-file",
+                       "contentBase64": base64.b64encode(pem.encode("ascii")).decode()}],
+        }).encode(),
+        method="POST",
+        headers={"Content-Type": "application/json",
+                 "Authorization": "Bearer " + os.environ["POLARIS_RUN_TOKEN"]},
+    )
+    with urllib.request.urlopen(req, timeout=20) as resp:
+        return json.loads(resp.read().decode() or "{}")
+
+
+def main():
+    raw = sys.argv[1] if len(sys.argv) > 1 else ""
+    args = parse_args(raw)
+    target = args.get("target", "")
+    if not target:
+        log("no target= in the args - nothing to fetch (a test run with no args?)")
+        return 0
+    if "{" in raw:
+        log("warning: the args still contain '{' - a token in the args template is mistyped")
+    host, port = split_target(target)
+    sni = args.get("sni") or host
+
+    try:
+        der, info, verified = fetch_cert(host, port, sni)
+    except (OSError, ssl.SSLError) as e:
+        log("could not fetch the certificate from %s:%d: %s" % (host, port, e))
+        return 1
+    fp = hashlib.sha256(der).hexdigest()
+    pem = ssl.DER_cert_to_PEM_cert(der)
+    if not info:
+        info = decode_untrusted(pem)
+    log("fetched %s:%d sha256=%s verified=%s" % (host, port, fp, verified))
+
+    seen_file = os.path.join(SEEN_DIR, "".join(c if c.isalnum() or c in "._-" else "_" for c in "%s_%d" % (host, port)))
+    try:
+        with open(seen_file, encoding="utf-8") as f:
+            if f.read().strip() == fp:
+                log("this certificate was already mailed - nothing to do")
+                return 0
+    except FileNotFoundError:
+        pass
+
+    lines = [
+        "The TLS certificate served by %s:%d has changed." % (host, port),
+        "",
+        "SHA-256 fingerprint: %s" % ":".join(fp[i:i + 2] for i in range(0, len(fp), 2)).upper(),
+        "Trusted by the Polaris server: %s" % ("yes" if verified else "NO - check the attachment by hand"),
+    ]
+    if info:
+        sans = ", ".join(v for k, v in info.get("subjectAltName", ()) if k == "DNS")
+        lines += [
+            "Subject:     %s" % name_of(info.get("subject")),
+            "Issuer:      %s" % name_of(info.get("issuer")),
+            "Valid from:  %s" % info.get("notBefore", "?"),
+            "Valid until: %s" % info.get("notAfter", "?"),
+            "DNS names:   %s" % (sans or "-"),
+        ]
+    for key, label in (("source", "Reported by"), ("rule", "Automation"), ("time", "Detected"), ("summary", "Polaris says")):
+        if args.get(key):
+            lines.append("%-12s %s" % (label + ":", args[key]))
+    lines += ["", "The certificate (leaf only, PEM) is attached."]
+    subject = "TLS certificate renewed: %s%s" % (host, (" (valid until %s)" % info["notAfter"]) if info and info.get("notAfter") else "")
+
+    if args.get("dry_run") == "1" or not os.environ.get("POLARIS_RUN_TOKEN"):
+        why = "dry run" if args.get("dry_run") == "1" else "no POLARIS_RUN_TOKEN (email is not enabled on this action or test run)"
+        log("%s - not sending. Email would be:\n%s\n\n%s" % (why, subject, "\n".join(lines)))
+        return 0
+
+    try:
+        out = send_via_polaris(subject, "\n".join(lines) + "\n", "%s.pem" % host, pem)
+    except urllib.error.HTTPError as e:
+        log("Polaris refused the email (%d): %s" % (e.code, e.read().decode(errors="replace")[:300]))
+        return 1
+    except (OSError, ValueError) as e:
+        log("could not reach Polaris to send: %s" % e)
+        return 1
+
+    os.makedirs(SEEN_DIR, mode=0o700, exist_ok=True)
+    with open(seen_file, "w", encoding="utf-8") as f:
+        f.write(fp + "\n")
+    log("mailed %s.pem to %s recipient(s); %s send(s) left this run" % (host, out.get("sent", "?"), out.get("remaining", "?")))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+```
+
+Prints the fingerprint it fetched and `mailed <host>.pem to N recipient(s)`. Safe to run
+twice — the fingerprint it last mailed is kept per target under `/var/tmp`, so several agent
+hosts reporting one renewal (or a repeat) send one email. The Polaris server must be able to
+reach the site; a server that does not trust the certificate still mails it and says so. The
+attachment is the site's own certificate, not its chain.
+

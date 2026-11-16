@@ -6,7 +6,8 @@ handed in, and no callback into the engine.
 | Channel | Server target | Agent target |
 |---|---|---|
 | **Environment** — `POLARIS_ALERT_ID`, `POLARIS_RULE`, `POLARIS_ASSET` (all **ids**) | set | **not set** |
-| **Environment** — `POLARIS_RUN_ID` | not set | set |
+| **Environment** — `POLARIS_RUN_ID` | set | set |
+| **Environment** — `POLARIS_RUN_TOKEN`, `POLARIS_API_URL` (send email through Polaris, rule 190) | set when the action allows email | **not set** |
 | **Args** — the action's args template, rendered at fire time | one argv entry | one argv entry |
 
 So: **the args template is the only channel that works on both targets, and the only one that

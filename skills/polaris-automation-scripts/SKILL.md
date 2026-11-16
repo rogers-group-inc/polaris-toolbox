@@ -32,10 +32,10 @@ If you omit the args template, the script gets `$1` empty and, on the agent, no 
 
 | You need… | Read |
 |---|---|
-| where it runs, interpreters and their argv, limits, statuses, timeouts, the env each host sets, audit + retention | [references/execution-contract.md](references/execution-contract.md) |
+| where it runs, interpreters and their argv, limits, statuses, timeouts, the env each host sets, sending email through Polaris (POLARIS_RUN_TOKEN, rule 190), audit + retention | [references/execution-contract.md](references/execution-contract.md) |
 | the full `{token}` vocabulary, the single-argv rule, the args conventions to generate, empty/typo'd context guards | [references/context-and-args.md](references/context-and-args.md) |
 | the numbered authoring rules — run through these before emitting anything | [references/authoring-rules.md](references/authoring-rules.md) |
-| ready-to-paste recipes: bash skeleton, once-per-alert guard, syslog forward, diagnostics collector, webhook/ticket (python3), Polaris API callback (python3), Windows agent remediation (PowerShell) | [references/recipes.md](references/recipes.md) |
+| ready-to-paste recipes: bash skeleton, once-per-alert guard, syslog forward, diagnostics collector, webhook/ticket (python3), Polaris API callback (python3), Windows agent remediation (PowerShell), TLS certificate mailer that sends through Polaris (python3, rule 190) | [references/recipes.md](references/recipes.md) |
 
 ## The eight things that are always true
 
