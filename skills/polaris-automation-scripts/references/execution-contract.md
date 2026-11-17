@@ -125,7 +125,9 @@ The agent hands the child its own full environment plus `POLARIS_RUN_ID`.
 ## Sending email through Polaris (server runs, Polaris rule 190)
 
 When the automation's script action has **Let this script send email through Polaris**
-ticked (`email: { channelId, addresses }` on the action, server runs only), each run gets:
+ticked (`email` on the action, server runs only — since Polaris rule 190(a) its recipients are
+the Notify picker's: email channels plus To / Cc / Bcc, resolved to plain addresses when the
+automation fires), each run gets:
 
 | Variable | Holds |
 |---|---|
@@ -137,6 +139,9 @@ Send with `POST $POLARIS_API_URL/script-runs/self/email`, header
 `{ "subject": "…", "text": "…", "files": [{ "filename", "contentType", "contentBase64" }] }`.
 
 - **The script never names recipients.** They are the action's; a body with a `to` is a 400.
+- Each send goes out as **one message per ticked channel**, full To line visible, Cc / Bcc as
+  the action set them. `sent` in the 200 is the recipient count across To + Cc + Bcc. One
+  channel failing while another succeeds is still a 200; every channel failing is a 502.
 - ≤ 3 sends per run (429 after), ≤ 5 files, ≤ 512 KB decoded in total, executable types
   (`.exe`, `.ps1`, `.js`, `.sh`, …) refused (400). Subject ≤ 200 characters, text ≤ 32 KB.
 - 401 = no pass, a wrong one, or the run ended; 403 = not called from the Polaris host;

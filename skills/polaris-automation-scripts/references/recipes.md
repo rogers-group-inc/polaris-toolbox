@@ -535,7 +535,7 @@ action's own Polaris email channel. No SMTP settings, no password on the host.
 **Registry**: Name `polaris-cert-renewed-mail` · Interpreter **python3** · Runs on **the Polaris server** · Timeout **30**
 
 **On the automation's Script action**: tick **Let this script send email through Polaris**,
-pick the email channel, and list the addresses under **Send to**.
+tick the email channel(s) and fill To / Cc / Bcc as on a Send a notification action.
 
 **Args template** (the first line is typed per automation — the check's site)
 ```
