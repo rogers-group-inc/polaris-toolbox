@@ -149,7 +149,11 @@ Single-brace `{token}`. Not `{{ }}`.
 `{event.action}` · `{event.resource}` · `{event.resourceType}` · `{event.actor}` ·
 `{event.message}` (the reason — free text) · `{event.level}`
 
-Empty on every other trigger type.
+Path Monitor events (`path_check.tls_cert_changed`, `path_check.path_changed`; Polaris rule
+85(e)) also fill `{check.target}` (the check's URL / host:port / host as configured when the
+event was written), `{check.name}` and `{check.id}`.
+
+Empty on every other trigger type (the `{check.*}` tokens are blank on a path METRIC alert too).
 
 ### Escalation
 

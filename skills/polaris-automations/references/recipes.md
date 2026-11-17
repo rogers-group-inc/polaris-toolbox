@@ -245,10 +245,11 @@ expires later than the last one it saw. Needs Polaris rule 85(c).
 
 - **To email the new certificate itself** instead of a notice, replace the notify with a script
   action that sends through Polaris (rule 190):
-  `{ "type": "script", "scriptId": "<script-id>", "runOn": "server", "argsTemplate": "target=<site host>\nrule={rule}\nsource={event.resource}\ntime={time.local}\nsummary={event.message}", "email": { "channelIds": ["<email-channel-id>"], "addresses": ["<recipient@example.com>"] } }`
+  `{ "type": "script", "scriptId": "<script-id>", "runOn": "server", "argsTemplate": "target={check.target}\nrule={rule}\nsource={event.resource}\ntime={time.local}\nsummary={event.message}", "email": { "channelIds": ["<email-channel-id>"], "addresses": ["<recipient@example.com>"] } }`
   (the `email` block takes the notify action's recipient fields — `recipientDeviceRegionLevels`,
   `recipientRoles`, `cc`, `bcc`, … — Polaris rule 190(a))
-  — the script is `polaris-automation-scripts` recipe 8.
+  — the script is `polaris-automation-scripts` recipe 8. `{check.target}` (Polaris rule 85(e))
+  is the URL of the check that saw the renewal, so the one automation covers every check.
 - **Why an `event` trigger:** `detailsMatch` filters on the Event's own `direction`. The
   Path Monitor change trigger (recipe 12) fires on renewals *and* on replacements.
 - **The scope stays unconstrained.** The Polaris server's own runs write an Event naming the

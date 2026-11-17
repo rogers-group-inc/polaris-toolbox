@@ -537,16 +537,17 @@ action's own Polaris email channel. No SMTP settings, no password on the host.
 **On the automation's Script action**: tick **Let this script send email through Polaris**,
 tick the email channel(s) and fill To / Cc / Bcc as on a Send a notification action.
 
-**Args template** (the first line is typed per automation — the check's site)
+**Args template** (`{check.target}` is the check's own URL, Polaris rule 85(e) — one automation
+serves every HTTPS check; on an older Polaris, type the site instead)
 ```
-target=intranet.example.com
+target={check.target}
 rule={rule}
 source={event.resource}
 time={time.local}
 summary={event.message}
 ```
 
-**Test run** (Scripts tab): arguments `target=intranet.example.com` and `dry_run=1`, then
+**Test run** (Scripts tab): arguments `target=https://intranet.example.com/` and `dry_run=1`, then
 again without `dry_run=1` choosing "Allow email to me via …" — the test emails only you.
 
 ```python
@@ -557,7 +558,9 @@ through the automation's own Polaris email channel (Polaris business rule 190).
 Polaris automation script. Runs on: the Polaris server.
 Args arrive as ONE positional parameter (sys.argv[1]), newline-delimited key=value:
 
-    target=<host>[:<port>]     the site the path check watches (port defaults to 443)
+    target=<url or host[:port]>  the site the path check watches - pass target={check.target}
+                               (Polaris rule 85(e)) to hand over the check's own URL;
+                               the port defaults to 443
     sni=<name>                 optional: server name to ask for, when target is an IP
     dry_run=1                  optional: fetch and print, send nothing
     rule=..., source=..., time=..., summary=...   optional context, shown in the email
@@ -580,6 +583,7 @@ import ssl
 import sys
 import tempfile
 import urllib.error
+import urllib.parse
 import urllib.request
 
 SEEN_DIR = "/var/tmp/polaris-cert-mail"   # last fingerprint mailed, per target
@@ -600,6 +604,9 @@ def parse_args(raw):
 
 
 def split_target(target):
+    if "://" in target:                             # a URL, as {check.target} gives it
+        u = urllib.parse.urlsplit(target)
+        return u.hostname or "", u.port or 443
     host, port = target, 443
     if target.startswith("["):                      # [ipv6]:port
         host, _, rest = target[1:].partition("]")
