@@ -164,7 +164,9 @@ happened** (rule 80a), so a window that lasted two seconds still suppresses.
   `monitorStatus == down` trigger, rule 78): this automation alerts the moment the device turns
   Dep. Down, says **DEPENDENCY DOWN**, and names the upstream device that is actually down. It is
   one notification: reminders and escalation wait until the upstream is back. Acknowledging the
-  root cause's own Down alert acknowledges it (rule 78a). A maintenance window still silences it.
+  root cause's own Down alert acknowledges it (rule 78a). A maintenance window still silences it —
+  the device's own, or one on any device above it along any dark path, even when the device the
+  alert would name is a switch that is down in its own right below the window.
 
 ## Quiet time is not coverage
 
