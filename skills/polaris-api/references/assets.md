@@ -40,7 +40,7 @@ One device — the full asset record at the top level (not wrapped), including m
 
 _Gate: assets:read_
 
-Which discovery sources claim this device (Entra / Intune / AD / FortiGate / vCenter / agent / manual …). Response: a JSON array of `{ id, sourceKind, externalId, integration, observed, firstSeen, lastSeen }`.
+Which discovery sources claim this device (Entra / Intune / AD / FortiGate / vCenter / agent / manual …). Response: a JSON array of `{ id, sourceKind, externalId, integration, observed, state, firstSeen, lastSeen, missingSince, retired }`. A source that no longer finds the device has `missingSince` set and `state.state` `"missing"`; an entry with `retired: true` is the last-known copy of a source record a disappearance sweep removed, listed after the live sources — its `id` is not a source id and cannot be split.
 
 ### GET /assets/:id/sightings
 
